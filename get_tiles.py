@@ -181,9 +181,14 @@ class GetTilesWithinMapCanvas:
     def fetch_tile(self, z, x, y):
         tile_URL = 'https://cyberjapandata.gsi.go.jp/xyz/dem/{}/{}/{}.txt'.format(z, x, y)
         # df = pd.read_csv(tile_URL, header=None).replace("e", 0)
-        csv_file = urllib.request.urlopen(tile_URL)
-        array = np.loadtxt(csv_file, delimiter=',')
-        np.where(array == "e", 0, array)
+        try:
+            csv_file = urllib.request.urlopen(tile_URL)
+            array = np.genfromtxt(csv_file, delimiter=',')
+            print(array.shape)
+        except urllib.error.HTTPError:
+            print("タイルが存在しません")
+            array = np.full((256, 256), -9999, dtype="int")
+        np.where(array == "e", -9999, array)
         return array
 
     # 範囲内の全ての標高タイルをマージ
