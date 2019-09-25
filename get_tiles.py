@@ -33,7 +33,7 @@ class GetTilesWithinMapCanvas:
         # ディレクトリの指定が出来るようにする
         self.dlg.mQgsFileWidget.setStorageMode(QgsFileWidget.GetDirectory)
 
-        for i in range(2, 15):
+        for i in range(5, 15):
             self.dlg.comboBox.addItem(str(i))
 
         # ダイアログのボタンボックスがaccepted（OK）されたらcalcが作動
@@ -239,7 +239,10 @@ class GetTilesWithinMapCanvas:
         print('取得タイル数:{}枚'.format(get_tile_number))
         if get_tile_number > 50:
             raise Exception('取得するタイルが大きすぎます。処理を停止します')
-        return  np.concatenate([np.concatenate([self.fetch_tile(z, x, y) for y in y_range], axis=0) for x in x_range], axis=1)
+        all_array = np.concatenate([np.concatenate([self.fetch_tile(z, x, y) for y in y_range], axis=0) for x in x_range], axis=1)
+        if (all_array == -9999).all():
+            raise Exception('指定の範囲に標高タイルは存在しません')
+        return  all_array
 
     # アレイと座標、ピクセルサイズ、グリッドサイズからGeoTiffを作成
     def write_geotiff(self, array, lower_left_lon, upper_right_lat, pixel_size_x, pixel_size_y, xlen, ylen):
