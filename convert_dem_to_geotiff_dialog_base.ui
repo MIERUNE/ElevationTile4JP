@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>140</height>
+    <height>200</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>110</y>
+     <y>160</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -33,7 +33,25 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
+     <y>20</y>
+     <width>91</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>DEM格納フォルダ</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>70</y>
      <width>121</width>
      <height>16</height>
     </rect>
@@ -47,26 +65,11 @@
     <string>GeoTiff吐出しフォルダ</string>
    </property>
   </widget>
-  <widget class="QgsFileWidget" name="mQgsFileWidget">
+  <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>30</y>
-     <width>381</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>60</y>
+     <y>120</y>
      <width>111</width>
      <height>16</height>
     </rect>
@@ -80,11 +83,56 @@
     <string>EPSGコード</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QgsProjectionSelectionWidget" name="mQgsProjectionSelectionWidget">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>60</y>
+     <x>10</x>
+     <y>140</y>
+     <width>191</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QgsFileWidget" name="mQgsFileWidget_1">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>381</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QgsFileWidget" name="mQgsFileWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>90</y>
+     <width>381</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>120</y>
      <width>71</width>
      <height>16</height>
     </rect>
@@ -101,27 +149,12 @@
     <string>ズームレベル</string>
    </property>
   </widget>
-  <widget class="QgsProjectionSelectionWidget" name="mQgsProjectionSelectionWidget">
+  <widget class="QSpinBox" name="spinBox">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>80</y>
-     <width>191</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="comboBox">
-   <property name="geometry">
-    <rect>
-     <x>270</x>
-     <y>80</y>
-     <width>69</width>
+     <x>280</x>
+     <y>140</y>
+     <width>42</width>
      <height>22</height>
     </rect>
    </property>
