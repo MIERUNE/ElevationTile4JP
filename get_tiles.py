@@ -33,7 +33,7 @@ class GetTilesWithinMapCanvas:
         # ディレクトリの指定が出来るようにする
         self.dlg.mQgsFileWidget.setStorageMode(QgsFileWidget.GetDirectory)
 
-        for i in range(5, 15):
+        for i in range(0, 15):
             self.dlg.comboBox.addItem(str(i))
 
         # ダイアログのボタンボックスがaccepted（OK）されたらcalcが作動
@@ -65,17 +65,32 @@ class GetTilesWithinMapCanvas:
 
         lower_left_latlon = self.tile_to_pixel_coordinate_of_corner(zoomlevel, lower_left_tile_path[1], lower_left_tile_path[2])[0]
         upper_right_latlon = self.tile_to_pixel_coordinate_of_corner(zoomlevel, upper_light_tile_path[1], upper_light_tile_path[2])[1]
+        print('lower_left_latlon', lower_left_latlon, 'upper_right_latlon', upper_right_latlon)
 
         lower_left_XY = self.transform_latlon_to_XY(lower_left_latlon)
         upper_right_XY = self.transform_latlon_to_XY(upper_right_latlon)
+        print('lower_left_XY', lower_left_XY, 'upper_right_XY', upper_right_XY)
 
-        pixel_size_x = (upper_right_XY[0] - lower_left_XY[0]) / xlen
-        pixel_size_y = (lower_left_XY[1] - upper_right_XY[1]) / ylen
+        # 座標の右側の絶対値から左側の絶対値を引く
+        # どっちもプラス、マイナスなら、絶対値の大きい方から小さい方を引く
+        if upper_right_XY[0] >= 0 and lower_left_XY[0] >= 0:
+            pixel_size_x = (abs(upper_right_XY[0]) - abs(lower_left_XY[0])) / xlen
+            pixel_size_y = -(abs(upper_right_XY[1]) - abs(lower_left_XY[1])) / ylen
+        elif upper_right_XY[0] <= 0 and lower_left_XY[0] <= 0:
+            pixel_size_x = (abs(upper_right_XY[0]) - abs(lower_left_XY[0])) / xlen
+            pixel_size_y = -(abs(upper_right_XY[1]) - abs(lower_left_XY[1])) / ylen
+        # 片方がプラスなら絶対値を足す
+        elif upper_right_XY[0] <= 0 and lower_left_XY[0] >= 0:
+            pixel_size_x = (abs(upper_right_XY[0]) + abs(lower_left_XY[0])) / xlen
+            pixel_size_y = -(abs(upper_right_XY[1]) + abs(lower_left_XY[1])) / ylen
+        elif upper_right_XY[0] >= 0 and lower_left_XY[0] <= 0:
+            pixel_size_x = (abs(upper_right_XY[0]) + abs(lower_left_XY[0])) / xlen
+            pixel_size_y = -(abs(upper_right_XY[1]) + abs(lower_left_XY[1])) / ylen
 
         print('pixel_size_x', pixel_size_x, 'pixel_size_y', pixel_size_y)
 
-        print('左上:', upper_right_XY[0], lower_left_XY[1])
-        print('右下:', lower_left_XY[0], upper_right_XY[1])
+        print('左上:', lower_left_XY[0], upper_right_XY[1])
+        print('右下:', upper_right_XY[0], lower_left_XY[1])
 
         geotiff = self.write_geotiff(array, lower_left_XY[0], upper_right_XY[1], pixel_size_x, pixel_size_y, xlen, ylen)
 
@@ -91,7 +106,7 @@ class GetTilesWithinMapCanvas:
     # mapcanvasのXY座標のminとmaxを取得
     def canvas_XY_coordinate_of_minmax(self):
         extent = self.iface.mapCanvas().extent()
-        xmin, xmax, ymin, ymax =  float(extent.xMinimum()), float(extent.xMaximum()), float(extent.yMinimum()), float(extent.yMaximum())
+        xmin, xmax, ymin, ymax = float(extent.xMinimum()), float(extent.xMaximum()), float(extent.yMinimum()), float(extent.yMaximum())
         return [xmin, xmax, ymin, ymax]
 
     # 四隅のXY座標を取得
@@ -132,7 +147,22 @@ class GetTilesWithinMapCanvas:
         dest_crs = pyproj.Proj(init='EPSG:3857')
         lat = latlon[0]
         lon = latlon[1]
+        # projのバグ？対策
+        # 地図の端部は若干85と180をはみ出て原点の位置が座標系の変換時にずれるのでそれを修正
+        if lat < -85:
+            lat = -85.05112877980659
+        elif lat > 85:
+            lat = 85.05112877980659
+
+        if lon < -180:
+            lon = int(-180)
+        elif lon > 180:
+            lon = int(180)
+        print('lat', lat)
+        print('lon', lon)
         X, Y = pyproj.transform(src_crs, dest_crs, lon, lat)
+
+        print('X, Y', X, Y)
         return [X, Y]
 
     # 緯度経度からタイル座標を算出
