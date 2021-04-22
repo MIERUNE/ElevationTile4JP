@@ -1,5 +1,7 @@
-import osr
-from osgeo import gdal
+import io,sys
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+from osgeo import gdal, osr
 import pyproj
 from math import log, tan, pi, e, atan, exp
 import sys
@@ -7,7 +9,6 @@ import numpy as np
 import os
 import requests
 import urllib.request, urllib.error
-# import pandas as pd
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
