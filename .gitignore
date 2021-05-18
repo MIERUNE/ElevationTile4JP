@@ -1,2 +1,3 @@
 .DS_Store
 !.gitkeep
+/__pycache__/

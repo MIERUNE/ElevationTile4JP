@@ -5,6 +5,7 @@ from math import log, tan, pi, e, atan, exp
 import sys
 import numpy as np
 import os
+from pathlib import Path
 import requests
 import urllib.request, urllib.error
 # import pandas as pd
@@ -24,11 +25,10 @@ class GetTilesWithinMapCanvas:
     def __init__(self, iface):
         self.iface = iface
         self.dlg = ElevationTilesToGeoTiffDialog()
-
-        self.current_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'GeoTiff')
+        self.project = QgsProject.instance()
 
         # ダイアログのobject_nameに対してメソッドを指定。デフォルトのパスをセット
-        self.dlg.mQgsFileWidget.setFilePath(self.current_dir)
+        self.dlg.mQgsFileWidget.setFilePath(self.project.homePath())
         
         # ディレクトリの指定が出来るようにする
         self.dlg.mQgsFileWidget.setStorageMode(QgsFileWidget.GetDirectory)
@@ -48,7 +48,7 @@ class GetTilesWithinMapCanvas:
 
     # 一括処理を行うメソッド
     def calc(self):
-        self.geotiff_output_path = self.dlg.mQgsFileWidget.filePath()
+        self.geotiff_output_path = Path(self.dlg.mQgsFileWidget.filePath())
         output_crs = self.dlg.mQgsProjectionSelectionWidget.crs().authid()
 
         xmin, xmax, ymin, ymax = self.canvas_XY_coordinate_of_minmax()
@@ -97,11 +97,11 @@ class GetTilesWithinMapCanvas:
         self.resampling('EPSG:3857', output_crs)
         print('warp:', output_crs)
 
-        merge_layer = QgsRasterLayer(os.path.join(self.geotiff_output_path, 'merge.tiff'), 'merge')
-        warp_layer = QgsRasterLayer(os.path.join(self.geotiff_output_path, 'warp.tiff'), 'warp')
+        merge_layer = QgsRasterLayer(str(self.geotiff_output_path.joinpath('merge.tiff')), 'merge')
+        warp_layer = QgsRasterLayer(str(self.geotiff_output_path.joinpath('warp.tiff')), 'warp')
 
-        QgsProject.instance().addMapLayer(merge_layer)
-        QgsProject.instance().addMapLayer(warp_layer)
+        self.project.addMapLayer(merge_layer)
+        self.project.addMapLayer(warp_layer)
 
     # mapcanvasのXY座標のminとmaxを取得
     def canvas_XY_coordinate_of_minmax(self):
@@ -285,7 +285,8 @@ class GetTilesWithinMapCanvas:
                         pixel_size_y]
 
         merge_tiff_file = 'merge.tiff'
-        tiffFile = os.path.join(self.geotiff_output_path, merge_tiff_file)
+        tiffFile = self.geotiff_output_path.joinpath(merge_tiff_file)
+        print("tiffFile")
         print(tiffFile)
 
         # ドライバーの作成
@@ -293,7 +294,7 @@ class GetTilesWithinMapCanvas:
         print(driver)
         print(type(driver))
         # ドライバーに対して「保存するファイルのパス・グリットセル数・バンド数・ラスターの種類・ドライバー固有のオプション」を指定してファイルを作成
-        dst_ds = driver.Create(tiffFile, xlen, ylen, 1, gdal.GDT_Float32)
+        dst_ds = driver.Create(str(tiffFile), xlen, ylen, 1, gdal.GDT_Float32)
         print(dst_ds)
         print(type(dst_ds))
         # geotransformをセット
@@ -318,9 +319,9 @@ class GetTilesWithinMapCanvas:
 
     # 再投影
     def resampling(self, srcSRS, outputSRS):
-        warp_path = os.path.join(self.geotiff_output_path, 'warp.tiff')
-        src_path = os.path.join(self.geotiff_output_path, 'merge.tiff')
-        resampledRas = gdal.Warp(warp_path, src_path, srcSRS=srcSRS, dstSRS=outputSRS, resampleAlg="near")
+        warp_path = self.geotiff_output_path.joinpath('warp.tiff')
+        src_path = self.geotiff_output_path.joinpath('merge.tiff')
+        resampledRas = gdal.Warp(str(warp_path), str(src_path), srcSRS=srcSRS, dstSRS=outputSRS, resampleAlg="near")
 
         resampledRas.FlushCache()
         resampledRas = None
