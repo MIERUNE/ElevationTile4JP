@@ -97,8 +97,8 @@ class GetTilesWithinMapCanvas:
         self.resampling('EPSG:3857', output_crs)
         print('warp:', output_crs)
 
-        merge_layer = QgsRasterLayer(os.path.join(self.geotiff_output_path, 'merge.tif'), 'merge')
-        warp_layer = QgsRasterLayer(os.path.join(self.geotiff_output_path, 'warp.tif'), 'warp')
+        merge_layer = QgsRasterLayer(os.path.join(self.geotiff_output_path, 'merge.tiff'), 'merge')
+        warp_layer = QgsRasterLayer(os.path.join(self.geotiff_output_path, 'warp.tiff'), 'warp')
 
         QgsProject.instance().addMapLayer(merge_layer)
         QgsProject.instance().addMapLayer(warp_layer)
@@ -284,13 +284,18 @@ class GetTilesWithinMapCanvas:
                         0,
                         pixel_size_y]
 
-        merge_tiff_file = 'merge.tif'
+        merge_tiff_file = 'merge.tiff'
         tiffFile = os.path.join(self.geotiff_output_path, merge_tiff_file)
+        print(tiffFile)
 
         # ドライバーの作成
         driver = gdal.GetDriverByName("GTiff")
+        print(driver)
+        print(type(driver))
         # ドライバーに対して「保存するファイルのパス・グリットセル数・バンド数・ラスターの種類・ドライバー固有のオプション」を指定してファイルを作成
         dst_ds = driver.Create(tiffFile, xlen, ylen, 1, gdal.GDT_Float32)
+        print(dst_ds)
+        print(type(dst_ds))
         # geotransformをセット
         dst_ds.SetGeoTransform(geotransform)
 
@@ -313,8 +318,8 @@ class GetTilesWithinMapCanvas:
 
     # 再投影
     def resampling(self, srcSRS, outputSRS):
-        warp_path = os.path.join(self.geotiff_output_path, 'warp.tif')
-        src_path = os.path.join(self.geotiff_output_path, 'merge.tif')
+        warp_path = os.path.join(self.geotiff_output_path, 'warp.tiff')
+        src_path = os.path.join(self.geotiff_output_path, 'merge.tiff')
         resampledRas = gdal.Warp(warp_path, src_path, srcSRS=srcSRS, dstSRS=outputSRS, resampleAlg="near")
 
         resampledRas.FlushCache()
