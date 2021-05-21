@@ -1,13 +1,10 @@
-import osr
-from osgeo import gdal
+from osgeo import gdal, osr
 import pyproj
 from math import log, tan, pi, e, atan, exp
-import sys
 import numpy as np
 import os
 import requests
 import urllib.request, urllib.error
-# import pandas as pd
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -60,7 +57,6 @@ class GetTilesWithinMapCanvas:
         array = self.fetch_all_tiles(start_path, end_path)
         xlen = array.shape[1]
         ylen = array.shape[0]
-
         print('xlen', xlen, 'ylen', ylen)
 
         lower_left_latlon = self.tile_to_pixel_coordinate_of_corner(zoomlevel, lower_left_tile_path[1], lower_left_tile_path[2])[0]
