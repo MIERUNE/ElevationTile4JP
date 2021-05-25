@@ -55,7 +55,7 @@ class GetTilesWithinMapCanvas:
 
         elevation_tile = ElevationTileConverter(
             output_path=geotiff_output_path,
-            output_epsg=output_crs,
+            output_epsg=f"EPSG:{output_crs.postgisSrid()}",
             zoom_level=zoom_level,
             bbox=bbox
         )
