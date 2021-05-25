@@ -21,10 +21,13 @@ class TileCoordinate:
         self.bbox: [float] = bbox
 
     # 四隅の緯度経度（Webメルカトル）を配列で受け取ってタイル座標のminmaxを取得
+    # QGISなどでWebメルカトルの背景地図を表示させた時に、画面範囲に背景地図のない部分が入っているとエラー
     def tile_coordinates_of_corner(self, corner_xy_list, zoom):
         corner_latlon_list = [self.xy_to_latlon(xy) for xy in corner_xy_list]
         tile_coordinates = [self.latlon_to_tile_coordinate(
             latlon[0], latlon[1], zoom) for latlon in corner_latlon_list]
+
+        assert tile_coordinates[1][0] < tile_coordinates[2][0], "取得開始タイル番号より終了タイル番号の方が大きくなっています。"
 
         tile_numbers = {
             "start_x": tile_coordinates[1][0],
