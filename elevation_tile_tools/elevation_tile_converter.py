@@ -3,9 +3,9 @@ from pathlib import Path
 
 import pyproj
 
-from elevation_tile_tools.elevation_array import ElevationArray
-from elevation_tile_tools.geotiff import GeoTiff
-from elevation_tile_tools.tile_coordinate import TileCoordinate
+from .elevation_array import ElevationArray
+from .geotiff import GeoTiff
+from .tile_coordinate import TileCoordinate
 
 
 class ElevationTileConverter:
