@@ -61,8 +61,8 @@ class GetTilesWithinMapCanvas:
         )
         elevation_tile.calc()
 
-        QgsRasterLayer(str(geotiff_output_path.joinpath('merge.tiff')), 'merge')
-        QgsRasterLayer(str(geotiff_output_path.joinpath('warp.tiff')), 'warp')
+        QgsProject.instance().addMapLayer(QgsRasterLayer(
+            str(geotiff_output_path.joinpath('output.tif')), ' elevation_tile'))
 
     def get_current_zoom(self):
         scale = self.iface.mapCanvas().scale()
