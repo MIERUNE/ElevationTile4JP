@@ -50,11 +50,7 @@ class ElevationTileConverter:
             lon = int(-180)
         elif lon > 180:
             lon = int(180)
-        print("lat", lat)
-        print("lon", lon)
         X, Y = pyproj.transform(src_crs, dest_crs, lon, lat)
-
-        print("X, Y", X, Y)
         return [X, Y]
 
     # タイル座標から、そのタイルの左下・右上の緯度経度を算出
@@ -100,16 +96,9 @@ class ElevationTileConverter:
         upper_right_latlon = self.tile_to_pixel_coordinate_of_corner(
             self.zoom_level, upper_light_tile_path[0], upper_light_tile_path[1]
         )[1]
-        print(
-            "lower_left_latlon",
-            lower_left_latlon,
-            "upper_right_latlon",
-            upper_right_latlon,
-        )
 
         lower_left_XY = self.transform_latlon_to_xy(lower_left_latlon)
         upper_right_XY = self.transform_latlon_to_xy(upper_right_latlon)
-        print("lower_left_XY", lower_left_XY, "upper_right_XY", upper_right_XY)
 
         # 座標の右側の絶対値から左側の絶対値を引く
         # どっちもプラス、マイナスなら、絶対値の大きい方から小さい方を引く
@@ -136,11 +125,6 @@ class ElevationTileConverter:
                 abs(upper_right_XY[0]) + abs(lower_left_XY[0])) / x_length
             pixel_size_y = - \
                 (abs(upper_right_XY[1]) + abs(lower_left_XY[1])) / y_length
-
-        print("pixel_size_x", pixel_size_x, "pixel_size_y", pixel_size_y)
-
-        print("左上:", lower_left_XY[0], upper_right_XY[1])
-        print("右下:", upper_right_XY[0], lower_left_XY[1])
 
         self.params_for_creating_geotiff = [
             np_array,

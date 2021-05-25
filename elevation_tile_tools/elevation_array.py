@@ -29,8 +29,13 @@ class ElevationArray:
         number_of_tile = len(x_length) * len(y_length)
         print("取得タイル数:{}枚".format(number_of_tile))
 
-        if number_of_tile > 100:
-            raise Exception("取得するタイルが大きすぎます。処理を停止します")
+        max_tile = 100
+
+        if number_of_tile > max_tile:
+            raise Exception(
+                "取得するタイルが大きすぎます。処理を停止します"
+                f"取得できるのは{max_tile}枚までです。取得枚数->{number_of_tile}枚"
+            )
         all_array = np.concatenate([np.concatenate([self.fetch_tile(
             self.zoom_level, x, y) for y in y_length], axis=0) for x in x_length], axis=1)
 
