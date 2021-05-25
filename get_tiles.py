@@ -49,9 +49,9 @@ class GetTilesWithinMapCanvas:
     def calc(self):
         geotiff_output_path = Path(self.dlg.mQgsFileWidget.filePath())
         output_crs = self.dlg.mQgsProjectionSelectionWidget.crs()
-
+        project_crs = QgsProject.instance().crs()
         zoom_level = int(self.dlg.comboBox.currentText())
-        bbox = self.warp_bbox_to_4326(output_crs, self.get_canvas_bbox())
+        bbox = self.trunsfrom(project_crs, self.get_canvas_bbox())
 
         elevation_tile = ElevationTileConverter(
             output_path=geotiff_output_path,
@@ -81,12 +81,11 @@ class GetTilesWithinMapCanvas:
                 extent.yMaximum())
         return [xmin, ymin, xmax, ymax]
 
-    def warp_bbox_to_4326(self, src_crs, bbox):
-        worp_crs = QgsCoordinateReferenceSystem(4326)
+    def trunsfrom(self, src_crs, bbox, dest_crs=4326):
+        coord_transform = QgsCoordinateTransform(
+            src_crs, QgsCoordinateReferenceSystem(dest_crs), QgsProject.instance())
 
-        transform = QgsCoordinateTransform(src_crs, worp_crs, QgsProject.instance())
-
-        lower_left = transform.transform(bbox[0], bbox[1])
-        upper_right = transform.transform(bbox[2], bbox[3])
+        lower_left = coord_transform.transform(bbox[0], bbox[1])
+        upper_right = coord_transform.transform(bbox[2], bbox[3])
 
         return [lower_left.x(), lower_left.y(), upper_right.x(), upper_right.y()]
