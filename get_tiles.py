@@ -23,7 +23,6 @@ class GetTilesWithinMapCanvas:
 
         # ダイアログのobject_nameに対してメソッドを指定。デフォルトのパスをセット
         self.dlg.mQgsFileWidget.setFilePath(self.current_dir)
-        print(f"homePath: {self.current_dir}")
 
         # ディレクトリの指定が出来るようにする
         self.dlg.mQgsFileWidget.setStorageMode(QgsFileWidget.GetDirectory)
@@ -49,9 +48,10 @@ class GetTilesWithinMapCanvas:
     # 一括処理を行うメソッド
     def calc(self):
         geotiff_output_path = Path(self.dlg.mQgsFileWidget.filePath())
-        output_crs = self.dlg.mQgsProjectionSelectionWidget.crs().authid()
+        output_crs = self.dlg.mQgsProjectionSelectionWidget.crs()
+
         zoom_level = int(self.dlg.comboBox.currentText())
-        bbox = self.get_canvas_bbox()
+        bbox = self.warp_bbox_to_4326(output_crs, self.get_canvas_bbox())
 
         elevation_tile = ElevationTileConverter(
             output_path=geotiff_output_path,
@@ -80,3 +80,13 @@ class GetTilesWithinMapCanvas:
             extent.yMinimum()), float(
                 extent.yMaximum())
         return [xmin, ymin, xmax, ymax]
+
+    def warp_bbox_to_4326(self, src_crs, bbox):
+        worp_crs = QgsCoordinateReferenceSystem(4326)
+
+        transform = QgsCoordinateTransform(src_crs, worp_crs, QgsProject.instance())
+
+        lower_left = transform.transform(bbox[0], bbox[1])
+        upper_right = transform.transform(bbox[2], bbox[3])
+
+        return [lower_left.x(), lower_left.y(), upper_right.x(), upper_right.y()]
