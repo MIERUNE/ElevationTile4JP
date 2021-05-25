@@ -29,6 +29,8 @@ class GetTilesWithinMapCanvas:
         for i in range(0, 15):
             self.dlg.comboBox.addItem(str(i))
 
+        self.dlg.comboBox.setCurrentText(str(self.get_current_zoom()))
+
         # ダイアログのボタンボックスがaccepted（OK）されたらcalcが作動
         self.dlg.button_box.accepted.connect(self.calc)
         # ダイアログのボタンボックスがrejected（キャンセル）されたらdlg_cancel()が作動
@@ -43,7 +45,7 @@ class GetTilesWithinMapCanvas:
     def calc(self):
         geotiff_output_path = Path(self.dlg.mQgsFileWidget.filePath())
         output_crs = self.dlg.mQgsProjectionSelectionWidget.crs().authid()
-        zoom_level = self.canvas_zoom_level()
+        zoom_level = int(self.dlg.comboBox.currentText())
         bbox = self.get_canvas_bbox()
 
         elevation_tile = ElevationTileConverter(
@@ -57,20 +59,14 @@ class GetTilesWithinMapCanvas:
         QgsRasterLayer(str(geotiff_output_path.joinpath('merge.tiff')), 'merge')
         QgsRasterLayer(str(geotiff_output_path.joinpath('warp.tiff')), 'warp')
 
-    # mapcanvasのズームレベルを算出
-    def canvas_zoom_level(self):
+    def get_current_zoom(self):
         scale = self.iface.mapCanvas().scale()
         dpi = self.iface.mainWindow().physicalDpiX()
         maxScalePerPixel = 156543.04
         inchesPerMeter = 39.37
-        current_zoom_level = int(
-            round(log(((dpi * inchesPerMeter * maxScalePerPixel) / scale), 2), 0))
-        zoom_level = int(self.dlg.comboBox.currentText())
-        print('zoomlevel:', zoom_level)
-        print('現在のzoomlevel:', current_zoom_level)
-        return zoom_level
+        return int(round(log(((dpi * inchesPerMeter * maxScalePerPixel) / scale), 2), 0))
 
-    # mapcanvasのXY座標のminとmaxを取得
+    # map_canvasのXY座標のminとmaxを取得
     def get_canvas_bbox(self):
         extent = self.iface.mapCanvas().extent()
         xmin, xmax, ymin, ymax = float(
