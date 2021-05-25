@@ -1,3 +1,4 @@
+import os
 from math import log
 from pathlib import Path
 
@@ -18,13 +19,17 @@ class GetTilesWithinMapCanvas:
     def __init__(self, iface):
         self.iface = iface
         self.dlg = ElevationTilesToGeoTiffDialog()
-        self.project = QgsProject.instance()
+        self.current_dir = os.path.dirname(os.path.abspath(__file__))
 
         # ダイアログのobject_nameに対してメソッドを指定。デフォルトのパスをセット
-        self.dlg.mQgsFileWidget.setFilePath(self.project.homePath())
+        self.dlg.mQgsFileWidget.setFilePath(self.current_dir)
+        print(f"homePath: {self.current_dir}")
 
         # ディレクトリの指定が出来るようにする
         self.dlg.mQgsFileWidget.setStorageMode(QgsFileWidget.GetDirectory)
+
+        # プロジェクトのデフォルトのcrsを格納
+        self.dlg.mQgsProjectionSelectionWidget.setCrs(QgsProject.instance().crs())
 
         for i in range(0, 15):
             self.dlg.comboBox.addItem(str(i))
