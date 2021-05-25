@@ -1,3 +1,4 @@
+from math import log
 from pathlib import Path
 
 from PyQt5.QtCore import *
@@ -42,9 +43,8 @@ class GetTilesWithinMapCanvas:
     def calc(self):
         geotiff_output_path = Path(self.dlg.mQgsFileWidget.filePath())
         output_crs = self.dlg.mQgsProjectionSelectionWidget.crs().authid()
-        zoom_level = self.canvas_zoomlevel()
-        xmin, xmax, ymin, ymax = self.canvas_XY_coordinate_of_minmax()
-        bbox = [xmin, ymin, xmax, ymax]
+        zoom_level = self.canvas_zoom_level()
+        bbox = self.get_canvas_bbox()
 
         elevation_tile = ElevationTileConverter(
             output_path=geotiff_output_path,
@@ -56,3 +56,26 @@ class GetTilesWithinMapCanvas:
 
         QgsRasterLayer(str(geotiff_output_path.joinpath('merge.tiff')), 'merge')
         QgsRasterLayer(str(geotiff_output_path.joinpath('warp.tiff')), 'warp')
+
+    # mapcanvasのズームレベルを算出
+    def canvas_zoom_level(self):
+        scale = self.iface.mapCanvas().scale()
+        dpi = self.iface.mainWindow().physicalDpiX()
+        maxScalePerPixel = 156543.04
+        inchesPerMeter = 39.37
+        current_zoom_level = int(
+            round(log(((dpi * inchesPerMeter * maxScalePerPixel) / scale), 2), 0))
+        zoom_level = int(self.dlg.comboBox.currentText())
+        print('zoomlevel:', zoom_level)
+        print('現在のzoomlevel:', current_zoom_level)
+        return zoom_level
+
+    # mapcanvasのXY座標のminとmaxを取得
+    def get_canvas_bbox(self):
+        extent = self.iface.mapCanvas().extent()
+        xmin, xmax, ymin, ymax = float(
+            extent.xMinimum()), float(
+            extent.xMaximum()), float(
+            extent.yMinimum()), float(
+                extent.yMaximum())
+        return [xmin, ymin, xmax, ymax]
