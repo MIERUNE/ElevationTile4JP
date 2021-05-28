@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import *
 from qgis.core import *
 from qgis.gui import *
 
-from .elevation_tiles_to_geotiff_dialog import ElevationTilesToGeoTiffDialog
+from .elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
 from .elevation_tile_tools import ElevationTileConverter
 
@@ -18,7 +18,7 @@ class GetTilesWithinMapCanvas:
     # ダイアログの初期表示等の処理はここに記載する
     def __init__(self, iface):
         self.iface = iface
-        self.dlg = ElevationTilesToGeoTiffDialog()
+        self.dlg = ElevationTileforJPDialog()
         self.current_dir = os.path.dirname(os.path.abspath(__file__))
 
         # ダイアログのobject_nameに対してメソッドを指定。デフォルトのパスをセット
