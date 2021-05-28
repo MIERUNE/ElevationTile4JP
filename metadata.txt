@@ -12,8 +12,8 @@ email=info@mierune.co.jp
 
 about=mapcanvas内の標高タイルを取得したのちに全てマージしてGeoTiffに変換します。
 
-tracker=https://github.com/MIERUNE/gsi_elevation_tiles_to_geotiff/issues
-repository=https://github.com/MIERUNE/gsi_elevation_tiles_to_geotiff
+tracker=https://github.com/MIERUNE/ElevationTile4JP/issue
+repository=https://github.com/MIERUNE/ElevationTile4JP
 # End of mandatory metadata
 
 # Recommended items:
@@ -25,7 +25,7 @@ hasProcessingProvider=no
 # Tags are comma separated with spaces allowed
 tags=python,  GeoTiff
 
-homepage=https://github.com/MIERUNE/gsi_elevation_tiles_to_geotiff
+homepage=https://github.com/MIERUNE/ElevationTile4JP
 category=Plugins
 icon=icon.png
 # experimental flag
