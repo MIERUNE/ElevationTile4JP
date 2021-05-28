@@ -12,7 +12,7 @@ email=info@mierune.co.jp
 
 about=mapcanvas内の標高タイルを取得したのちに全てマージしてGeoTiffに変換します。
 
-tracker=https://github.com/MIERUNE/ElevationTile4JP/issue
+tracker=https://github.com/MIERUNE/ElevationTile4JP/issues
 repository=https://github.com/MIERUNE/ElevationTile4JP
 # End of mandatory metadata
 
