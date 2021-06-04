@@ -43,7 +43,6 @@ class TileCoordinate:
         x = xy_coordinate[0]
         y = xy_coordinate[1]
         src_crs = pyproj.Proj(init="EPSG:4326")
-        # src_crs = pyproj.Proj(init="EPSG:3857")
         dest_crs = pyproj.Proj(init="EPSG:4326")
         lon, lat = pyproj.transform(src_crs, dest_crs, x, y)
         return [lat, lon]
