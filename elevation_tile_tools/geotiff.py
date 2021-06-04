@@ -1,4 +1,6 @@
+import datetime
 import os
+import shutil
 
 from osgeo import gdal, osr
 
@@ -56,14 +58,24 @@ class GeoTiff:
         dst_ds.FlushCache()
 
     # 再投影
-    def resampling(self, src_epsg, output_epsg):
-        warp_path = os.path.join(self.output_path, "output.tif")
+    def reprojection(self, src_epsg, output_epsg):
         src_path = os.path.join(self.output_path, "output.tif")
-        resampledRas = gdal.Warp(
-            warp_path,
+        # warp前後で同盟のファイルを指定できないため、一時ファイルを作成する
+        now = datetime.datetime.now()
+        tmp_filename = f"tmp_{now.strftime('%Y%m%d_%H%M%S')}.tif"
+        warped_path = os.path.join(self.output_path, tmp_filename)
+        shutil.copy2(src_path, warped_path)
+
+        resampled_ras = gdal.Warp(
+            warped_path,
             src_path,
             srcSRS=src_epsg,
             dstSRS=output_epsg,
-            resampleAlg="near")
+            resampleAlg="near"
+        )
+        resampled_ras.FlushCache()
+        del resampled_ras
 
-        resampledRas.FlushCache()
+        os.remove(src_path)
+        os.rename(warped_path, src_path)
+
