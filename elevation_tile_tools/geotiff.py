@@ -60,7 +60,7 @@ class GeoTiff:
     # 再投影
     def reprojection(self, src_epsg, output_epsg):
         src_path = os.path.join(self.output_path, "output.tif")
-        # warp前後で同盟のファイルを指定できないため、一時ファイルを作成する
+        # warp前後で同名のファイルを指定できないため、一時ファイルを作成する
         now = datetime.datetime.now()
         tmp_filename = f"tmp_{now.strftime('%Y%m%d_%H%M%S')}.tif"
         warped_path = os.path.join(self.output_path, tmp_filename)
