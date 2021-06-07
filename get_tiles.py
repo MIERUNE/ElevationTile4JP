@@ -18,22 +18,23 @@ class GetTilesWithinMapCanvas:
     # ダイアログの初期表示等の処理はここに記載する
     def __init__(self, iface):
         self.iface = iface
+        self.project = QgsProject.instance()
         self.dlg = ElevationTileforJPDialog()
-        self.current_dir = os.path.dirname(os.path.abspath(__file__))
+        self.project_dir = self.project.homePath()
 
         # ダイアログのobject_nameに対してメソッドを指定。デフォルトのパスをセット
-        self.dlg.mQgsFileWidget.setFilePath(self.current_dir)
+        self.dlg.mQgsFileWidget_output.setFilePath(self.project_dir)
 
-        # ディレクトリの指定が出来るようにする
-        self.dlg.mQgsFileWidget.setStorageMode(QgsFileWidget.GetDirectory)
+        # 出力ファイルの指定が出来るようにする
+        self.dlg.mQgsFileWidget_output.setStorageMode(QgsFileWidget.SaveFile)
 
         # プロジェクトのデフォルトのcrsを格納
-        self.dlg.mQgsProjectionSelectionWidget.setCrs(QgsProject.instance().crs())
+        self.dlg.mQgsProjectionSelectionWidget_output_crs.setCrs(self.project.crs())
 
         for i in range(0, 15):
-            self.dlg.comboBox.addItem(str(i))
+            self.dlg.comboBox_zoomlevel.addItem(str(i))
 
-        self.dlg.comboBox.setCurrentText(str(self.get_current_zoom()))
+        self.dlg.comboBox_zoomlevel.setCurrentText(str(self.get_current_zoom()))
 
         # ダイアログのボタンボックスがaccepted（OK）されたらcalcが作動
         self.dlg.button_box.accepted.connect(self.calc)
@@ -47,10 +48,10 @@ class GetTilesWithinMapCanvas:
 
     # 一括処理を行うメソッド
     def calc(self):
-        geotiff_output_path = Path(self.dlg.mQgsFileWidget.filePath())
-        output_crs = self.dlg.mQgsProjectionSelectionWidget.crs()
-        project_crs = QgsProject.instance().crs()
-        zoom_level = int(self.dlg.comboBox.currentText())
+        geotiff_output_path = Path(self.dlg.mQgsFileWidget_output.filePath())
+        output_crs = self.dlg.mQgsProjectionSelectionWidget_output.crs()
+        project_crs = self.project.crs()
+        zoom_level = int(self.dlg.comboBox_zoomlevel.currentText())
         bbox = self.transfrom(project_crs, self.get_canvas_bbox())
 
         elevation_tile = ElevationTileConverter(
@@ -61,7 +62,7 @@ class GetTilesWithinMapCanvas:
         )
         elevation_tile.calc()
 
-        QgsProject.instance().addMapLayer(QgsRasterLayer(
+        self.project.addMapLayer(QgsRasterLayer(
             str(geotiff_output_path.joinpath('output.tif')), ' elevation_tile'))
 
     def get_current_zoom(self):
@@ -83,7 +84,7 @@ class GetTilesWithinMapCanvas:
 
     def transfrom(self, src_crs, bbox, dest_crs=4326):
         coord_transform = QgsCoordinateTransform(
-            src_crs, QgsCoordinateReferenceSystem(dest_crs), QgsProject.instance())
+            src_crs, QgsCoordinateReferenceSystem(dest_crs), self.project)
 
         lower_left = coord_transform.transform(bbox[0], bbox[1])
         upper_right = coord_transform.transform(bbox[2], bbox[3])

@@ -160,7 +160,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>accepted()</signal>
-   <receiver>ElevationTileforJPDialogBase</receiver>
+   <receiver>ElevationTileforJPDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -176,7 +176,7 @@
   <connection>
    <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>ElevationTileforJPDialogBase</receiver>
+   <receiver>ElevationTileforJPDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
