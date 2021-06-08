@@ -148,4 +148,4 @@ class ElevationTileConverter:
         )
 
         if not self.output_epsg == "EPSG:3857":
-            geotiff.resampling("EPSG:3857", self.output_epsg)
+            geotiff.reprojection("EPSG:3857", self.output_epsg)
