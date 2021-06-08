@@ -29,6 +29,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    #
     from .elevation_tile_for_jp import ElevationTileForJP
     return ElevationTileForJP(iface)
