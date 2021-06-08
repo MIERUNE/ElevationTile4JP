@@ -25,8 +25,6 @@ class ElevationTileConverter:
                 43.11702412135048,
             ]
         self.output_path = output_path
-        if not self.output_path.exists():
-            self.output_path.mkdir(parents=True, exist_ok=True)
         self.zoom_level = zoom_level
         self.bbox = bbox
         self.output_epsg = output_epsg

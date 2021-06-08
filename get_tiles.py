@@ -1,6 +1,5 @@
 import os
 from math import log
-from pathlib import Path
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -51,7 +50,7 @@ class GetTilesWithinMapCanvas:
 
     # 一括処理を行うメソッド
     def calc(self):
-        geotiff_output_path = Path(self.dlg.mQgsFileWidget_output.filePath())
+        geotiff_output_path = self.dlg.mQgsFileWidget_output.filePath()
         output_crs = self.dlg.mQgsProjectionSelectionWidget_output_crs.crs()
         project_crs = self.project.crs()
         zoom_level = int(self.dlg.comboBox_zoomlevel.currentText())
@@ -65,8 +64,7 @@ class GetTilesWithinMapCanvas:
         )
         elevation_tile.calc()
 
-        self.project.addMapLayer(QgsRasterLayer(
-            str(geotiff_output_path.joinpath('output.tif')), ' elevation_tile'))
+        self.project.addMapLayer(QgsRasterLayer(geotiff_output_path, os.path.splitext(os.path.basename(geotiff_output_path))[0]))
 
     def get_current_zoom(self):
         scale = self.iface.mapCanvas().scale()
