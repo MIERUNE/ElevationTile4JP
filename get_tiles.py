@@ -49,7 +49,7 @@ class GetTilesWithinMapCanvas:
     # 一括処理を行うメソッド
     def calc(self):
         geotiff_output_path = Path(self.dlg.mQgsFileWidget_output.filePath())
-        output_crs = self.dlg.mQgsProjectionSelectionWidget_output.crs()
+        output_crs = self.dlg.mQgsProjectionSelectionWidget_output_crs.crs()
         project_crs = self.project.crs()
         zoom_level = int(self.dlg.comboBox_zoomlevel.currentText())
         bbox = self.transfrom(project_crs, self.get_canvas_bbox())
