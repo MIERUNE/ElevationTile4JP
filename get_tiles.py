@@ -26,8 +26,11 @@ class GetTilesWithinMapCanvas:
         self.dlg.mQgsFileWidget_output.setFilePath(self.project_dir)
 
         # 出力ファイルの指定が出来るようにする
-        self.dlg.mQgsFileWidget_output.setStorageMode(QgsFileWidget.SaveFile)
-
+        self.dlg.mQgsFileWidget_output.setFilter("*.tiff")
+        self.dlg.mQgsFileWidget_output.setStorageMode(
+            QgsFileWidget.StorageMode.SaveFile)
+        self.dlg.mQgsFileWidget_output.setDialogTitle(
+            "保存ファイルを選択してください")
         # プロジェクトのデフォルトのcrsを格納
         self.dlg.mQgsProjectionSelectionWidget_output_crs.setCrs(self.project.crs())
 
