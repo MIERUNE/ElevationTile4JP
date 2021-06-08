@@ -27,18 +27,18 @@ class ElevationArray:
         y_length = range(self.start_path[1], self.end_path[1] + 1)
 
         number_of_tile = len(x_length) * len(y_length)
-        print("取得タイル数:{}枚".format(number_of_tile))
+        print("number of tiles:{}".format(number_of_tile))
 
         max_tile = 100
 
         if number_of_tile > max_tile:
             raise Exception(
-                "取得するタイルが大きすぎます。処理を停止します"
-                f"取得できるのは{max_tile}枚までです。取得枚数->{number_of_tile}枚"
+                "The number of tiles to get is too large."
+                f"Maximum number of tiles to get is {max_tile}. Intended to get {number_of_tile} tiles."
             )
         all_array = np.concatenate([np.concatenate([self.fetch_tile(
             self.zoom_level, x, y) for y in y_length], axis=0) for x in x_length], axis=1)
 
         if (all_array == -9999).all():
-            raise Exception("指定の範囲に標高タイルは存在しません")
+            raise Exception("The specified extent is out of range from the provided dem tiles")
         return all_array
