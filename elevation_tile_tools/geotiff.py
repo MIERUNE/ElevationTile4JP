@@ -30,13 +30,10 @@ class GeoTiff:
             pixel_size_y,
         ]
 
-        merge_tiff_file = "output.tif"
-        tiffFile = os.path.join(self.output_path, merge_tiff_file)
-
         # ドライバーの作成
         driver = gdal.GetDriverByName("GTiff")
         # ドライバーに対して「保存するファイルのパス・グリットセル数・バンド数・ラスターの種類・ドライバー固有のオプション」を指定してファイルを作成
-        dst_ds = driver.Create(tiffFile, xlen, ylen, 1, gdal.GDT_Float32)
+        dst_ds = driver.Create(self.output_path, xlen, ylen, 1, gdal.GDT_Float32)
         # geotransformをセット
         dst_ds.SetGeoTransform(geotransform)
 
@@ -59,16 +56,14 @@ class GeoTiff:
 
     # 再投影
     def reprojection(self, src_epsg, output_epsg):
-        src_path = os.path.join(self.output_path, "output.tif")
-        # warp前後で同名のファイルを指定できないため、一時ファイルを作成する
+        # warp前後で同名のファイルを指定できないため、別名でファイルを作成する
         now = datetime.datetime.now()
-        tmp_filename = f"tmp_{now.strftime('%Y%m%d_%H%M%S')}.tif"
-        warped_path = os.path.join(self.output_path, tmp_filename)
-        shutil.copy2(src_path, warped_path)
+        tmp_filename = f"tmp_{now.strftime('%Y%m%d_%H%M%S')}.tiff"
+        warped_path = os.path.join(os.path.dirname(self.output_path), tmp_filename)
 
         resampled_ras = gdal.Warp(
             warped_path,
-            src_path,
+            self.output_path,
             srcSRS=src_epsg,
             dstSRS=output_epsg,
             resampleAlg="near"
@@ -76,6 +71,6 @@ class GeoTiff:
         resampled_ras.FlushCache()
         del resampled_ras
 
-        os.remove(src_path)
-        os.rename(warped_path, src_path)
+        os.remove(self.output_path)
+        os.rename(warped_path, self.output_path)
 
