@@ -56,6 +56,10 @@ class GetTilesWithinMapCanvas:
         zoom_level = int(self.dlg.comboBox_zoomlevel.currentText())
         bbox = self.transfrom(project_crs, self.get_canvas_bbox())
 
+        if geotiff_output_path == "":
+            QgsMessageLog.logMessage(tag="ELEVATIONTILE4JP", "出力ファイルを指定してください。")
+            return
+
         elevation_tile = ElevationTileConverter(
             output_path=geotiff_output_path,
             output_epsg=f"EPSG:{output_crs.postgisSrid()}",
