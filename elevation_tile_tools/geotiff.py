@@ -55,7 +55,7 @@ class GeoTiff:
         dst_ds.FlushCache()
 
     # 再投影
-    def reprojection(self, src_epsg, output_epsg):
+    def reprojection(self, src_crs_id, output_crs_id):
         # warp前後で同名のファイルを指定できないため、別名でファイルを作成する
         now = datetime.datetime.now()
         tmp_filename = f"tmp_{now.strftime('%Y%m%d_%H%M%S')}.tiff"
@@ -64,8 +64,8 @@ class GeoTiff:
         resampled_ras = gdal.Warp(
             warped_path,
             self.output_path,
-            srcSRS=src_epsg,
-            dstSRS=output_epsg,
+            srcSRS=src_crs_id,
+            dstSRS=output_crs_id,
             resampleAlg="near"
         )
         resampled_ras.FlushCache()
