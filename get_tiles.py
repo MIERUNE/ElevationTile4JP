@@ -65,20 +65,20 @@ class GetTilesWithinMapCanvas:
         # 入力値のバリデーション
         if geotiff_output_path == "":
             self.iface.messageBar().pushWarning(
-                u"ELEVATIONTILE4JP", u"出力ファイル名を指定してください。")
+                u"ElevationTile4JP", u"出力ファイル名を指定してください。")
             return
 
         output_crs_isvalid = output_crs.isValid()
         if not output_crs_isvalid:
             self.iface.messageBar().pushWarning(
-                u"ELEVATIONTILE4JP", u"出力ファイルの座標系が指定されていません。座標系を指定してください。")
+                u"ElevationTile4JP", u"出力ファイルの座標系が指定されていません。座標系を指定してください。")
             return
 
         # 標準時子午線を跨ぐ領域指定はタイルを取得できないので処理を中断する
         xmin, _, xmax, _ = bbox
         if xmin > xmax:
             self.iface.messageBar().pushWarning(
-                u"ELEVATIONTILE4JP", u"タイル取得範囲が不正です。マップキャンバスには標準時子午線を跨がない範囲を表示してください。")
+                u"ElevationTile4JP", u"タイル取得範囲が不正です。マップキャンバスには標準時子午線を跨がない範囲を表示してください。")
             return
 
         elevation_tile = ElevationTileConverter(
@@ -95,7 +95,7 @@ class GetTilesWithinMapCanvas:
         self.dlg_cancel()
 
         self.iface.messageBar().pushInfo(
-                u"ELEVATIONTILE4JP", u"GeoTiff形式のDEMを出力しました。")
+                u"ElevationTile4JP", u"GeoTiff形式のDEMを出力しました。")
 
     def get_current_zoom(self):
         scale = self.iface.mapCanvas().scale()
