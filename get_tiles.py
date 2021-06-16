@@ -78,12 +78,12 @@ class GetTilesWithinMapCanvas:
         xmin, _, xmax, _ = bbox
         if xmin > xmax:
             self.iface.messageBar().pushWarning(
-                u"ELEVATIONTILE4JP", u"タイル取得範囲が不正です。マップキャンバスの表示範囲は西経180度から東経180度の範囲を表示してください。")
+                u"ELEVATIONTILE4JP", u"タイル取得範囲が不正です。マップキャンバスには標準時子午線を跨がない範囲を表示してください。")
             return
-        print(output_crs.authid())
+
         elevation_tile = ElevationTileConverter(
             output_path=geotiff_output_path,
-            output_crs_id=str(output_crs.authid()),
+            output_crs_id=output_crs.authid(),
             zoom_level=zoom_level,
             bbox=bbox
         )
