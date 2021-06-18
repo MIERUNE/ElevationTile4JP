@@ -87,8 +87,16 @@ class GetTilesWithinMapCanvas:
             zoom_level=zoom_level,
             bbox=bbox
         )
-        elevation_tile.calc()
 
+        # 処理の実行
+        try:
+            elevation_tile.calc()
+        except Exception as e:
+            self.iface.messageBar().pushWarning(
+                u"ElevationTile4JP", u"取得タイル数が多すぎます。取得領域を狭くするか、ズームレベルを小さくしてください。")
+            return
+
+        # 出力ファイルをマップキャンバスに追加する
         self.project.addMapLayer(QgsRasterLayer(geotiff_output_path, os.path.splitext(
             os.path.basename(geotiff_output_path))[0]))
 
