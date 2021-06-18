@@ -61,7 +61,7 @@ class TileCoordinate:
         xmin, ymin, xmax, ymax = bbox
 
         if xmin > xmax:
-            raise ValueError(u"Extent is invalid. Extent of longitude must be from -180 to 180.")
+            raise ValueError("Extent is invalid. Extent of longitude must be from -180 to 180.")
 
         lower_left_XY = [xmin, ymin]
         upper_left_XY = [xmin, ymax]

@@ -40,5 +40,5 @@ class ElevationArray:
             self.zoom_level, x, y) for y in y_length], axis=0) for x in x_length], axis=1)
 
         if (all_array == -9999).all():
-            raise Exception(u"The specified extent is out of range from the provided dem tiles")
+            raise Exception("The specified extent is out of range from the provided dem tiles")
         return all_array
