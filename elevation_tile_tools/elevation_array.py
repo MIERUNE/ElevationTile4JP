@@ -3,7 +3,6 @@ import urllib
 import numpy as np
 
 
-
 class TileQuantityException(Exception):
     def __init__(self, max_number_of_tiles, number_of_tiles):
         self.number_of_tiles = number_of_tiles
@@ -39,11 +38,12 @@ class ElevationArray:
         x_length = range(self.start_path[0], self.end_path[0] + 1)
         y_length = range(self.start_path[1], self.end_path[1] + 1)
 
-        number_of_tile = len(x_length) * len(y_length)
-        print("number of tiles:{}".format(number_of_tile))
+        number_of_tiles = len(x_length) * len(y_length)
+        print("number of tiles:{}".format(number_of_tiles))
 
-        if number_of_tile > self.max_number_of_tiles:
-            raise TileQuantityException(number_of_tile)
+        if number_of_tiles > self.max_number_of_tiles:
+            raise TileQuantityException(
+                self.max_number_of_tiles, number_of_tiles)
         all_array = np.concatenate([np.concatenate([self.fetch_tile(
             self.zoom_level, x, y) for y in y_length], axis=0) for x in x_length], axis=1)
 
