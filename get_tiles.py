@@ -104,7 +104,7 @@ class GetTilesWithinMapCanvas:
         self.dlg_cancel()
 
         self.iface.messageBar().pushInfo(
-                u"ElevationTile4JP", u"GeoTiff形式のDEMを出力しました。")
+            u"ElevationTile4JP", u"GeoTiff形式のDEMを出力しました。")
 
     def get_current_zoom(self):
         scale = self.iface.mapCanvas().scale()
@@ -128,7 +128,7 @@ class GetTilesWithinMapCanvas:
         coord_transform = QgsCoordinateTransform(
             src_crs, dst_crs, self.project)
 
-        lower_left=coord_transform.transform(bbox[0], bbox[1])
-        upper_right=coord_transform.transform(bbox[2], bbox[3])
+        lower_left = coord_transform.transform(bbox[0], bbox[1])
+        upper_right = coord_transform.transform(bbox[2], bbox[3])
 
         return [lower_left.x(), lower_left.y(), upper_right.x(), upper_right.y()]
