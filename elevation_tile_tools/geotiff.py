@@ -66,7 +66,8 @@ class GeoTiff:
             self.output_path,
             srcSRS=src_crs_id,
             dstSRS=output_crs_id,
-            resampleAlg="near"
+            # resampleAlg="near"
+            resampleAlg="bilinear"
         )
         resampled_ras.FlushCache()
         del resampled_ras

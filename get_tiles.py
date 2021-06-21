@@ -11,9 +11,9 @@ from .elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
 from .elevation_tile_tools import ElevationTileConverter
 
-import warnings
+# import warnings
 
-warnings.simplefilter("ignore", ResourceWarning)
+# warnings.simplefilter("ignore", ResourceWarning)
 
 
 class GetTilesWithinMapCanvas:
@@ -60,7 +60,7 @@ class GetTilesWithinMapCanvas:
         output_crs = self.dlg.mQgsProjectionSelectionWidget_output_crs.crs()
         project_crs = self.project.crs()
         zoom_level = int(self.dlg.comboBox_zoomlevel.currentText())
-        bbox = self.transfrom(project_crs, self.get_canvas_bbox())
+        bbox = self.transform(project_crs, self.get_canvas_bbox())
 
         # 入力値のバリデーション
         if geotiff_output_path == "":
@@ -123,11 +123,12 @@ class GetTilesWithinMapCanvas:
                 extent.yMaximum())
         return [xmin, ymin, xmax, ymax]
 
-    def transfrom(self, src_crs, bbox, dest_crs=4326):
+    def transform(self, src_crs, bbox, dst_crs_id="EPSG:4326"):
+        dst_crs = QgsCoordinateReferenceSystem(dst_crs_id)
         coord_transform = QgsCoordinateTransform(
-            src_crs, QgsCoordinateReferenceSystem(dest_crs), self.project)
+            src_crs, dst_crs, self.project)
 
-        lower_left = coord_transform.transform(bbox[0], bbox[1])
-        upper_right = coord_transform.transform(bbox[2], bbox[3])
+        lower_left=coord_transform.transform(bbox[0], bbox[1])
+        upper_right=coord_transform.transform(bbox[2], bbox[3])
 
         return [lower_left.x(), lower_left.y(), upper_right.x(), upper_right.y()]
