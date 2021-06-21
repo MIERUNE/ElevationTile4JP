@@ -2,20 +2,21 @@ import urllib
 
 import numpy as np
 
-MAX_TILE = 100
 
 
 class TileQuantityException(Exception):
-    def __init__(self, number_of_tiles):
+    def __init__(self, max_number_of_tiles, number_of_tiles):
         self.number_of_tiles = number_of_tiles
+        self.max_number_of_tiles = max_number_of_tiles
 
     def __str__(self):
         return ("The number of tiles to get is too large. \n"
-                f"Maximum number of tiles to get is {MAX_TILE}. Intended to get {self.number_of_tiles} tiles.")
+                f"Maximum number of tiles to get is {self.max_number_of_tiles}. Intended to get {self.number_of_tiles} tiles.")
 
 
 class ElevationArray:
     def __init__(self, zoom_level, start_path, end_path):
+        self.max_number_of_tiles = 100
         self.zoom_level = zoom_level
         self.start_path = start_path
         self.end_path = end_path
@@ -41,7 +42,7 @@ class ElevationArray:
         number_of_tile = len(x_length) * len(y_length)
         print("number of tiles:{}".format(number_of_tile))
 
-        if number_of_tile > MAX_TILE:
+        if number_of_tile > self.max_number_of_tiles:
             raise TileQuantityException(number_of_tile)
         all_array = np.concatenate([np.concatenate([self.fetch_tile(
             self.zoom_level, x, y) for y in y_length], axis=0) for x in x_length], axis=1)

@@ -11,10 +11,6 @@ from .elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
 from .elevation_tile_tools import ElevationTileConverter
 
-# import warnings
-
-# warnings.simplefilter("ignore", ResourceWarning)
-
 
 class GetTilesWithinMapCanvas:
 
