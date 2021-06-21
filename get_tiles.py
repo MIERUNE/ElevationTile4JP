@@ -94,6 +94,7 @@ class GetTilesWithinMapCanvas:
         except Exception as e:
             self.iface.messageBar().pushWarning(
                 u"ElevationTile4JP", u"取得タイル数が多すぎます。取得領域を狭くするか、ズームレベルを小さくしてください。")
+            QgsMessageLog.logMessage(str(e), tag="ElevationTile4JP")
             return
 
         # 出力ファイルをマップキャンバスに追加する
