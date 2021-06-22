@@ -27,7 +27,7 @@ class TileCoordinate:
         tile_coordinates = [self.latlon_to_tile_coordinate(
             latlon[0], latlon[1], zoom) for latlon in corner_latlon_list]
 
-        assert tile_coordinates[1][0] < tile_coordinates[2][0], "取得開始タイル番号より終了タイル番号の方が大きくなっています。"
+        assert tile_coordinates[1][0] <= tile_coordinates[2][0], "取得開始タイル番号より終了タイル番号の方が大きくなっています。"
 
         tile_numbers = {
             "start_x": tile_coordinates[1][0],
@@ -59,10 +59,15 @@ class TileCoordinate:
     @staticmethod
     def make_corner_xy_from_bbox(bbox):
         xmin, ymin, xmax, ymax = bbox
+
+        if xmin > xmax:
+            raise ValueError("Extent is invalid. Extent of longitude must be from -180 to 180.")
+
         lower_left_XY = [xmin, ymin]
         upper_left_XY = [xmin, ymax]
         lower_right_XY = [xmax, ymin]
         upper_right_XY = [xmax, ymax]
+
         return [lower_left_XY, upper_left_XY, lower_right_XY, upper_right_XY]
 
     # タイル座標を全て取得してリストに格納、左上と右下のタイル座標を返す
