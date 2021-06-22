@@ -13,3 +13,8 @@ The original tile corrdinate reference system is web mercator (EPSG:3857) and ex
 
 ## Data source
 [Elevation tile](https://maps.gsi.go.jp/development/ichiran.html#dem) of [Geospatial Information Authority of Japan](https://www.gsi.go.jp/)
+
+---
+
+### License
+GNU GENERAL PUBLIC LICENSE 2
