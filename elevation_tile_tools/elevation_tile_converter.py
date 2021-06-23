@@ -12,7 +12,7 @@ class ElevationTileConverter:
     def __init__(
         self,
         output_path=Path(__file__).parent.parent / "GeoTiff",
-        output_epsg="EPSG:3857",
+        output_crs_id="EPSG:3857",
         zoom_level=10,
         bbox=None
     ):
@@ -25,11 +25,9 @@ class ElevationTileConverter:
                 43.11702412135048,
             ]
         self.output_path = output_path
-        if not self.output_path.exists():
-            self.output_path.mkdir(parents=True, exist_ok=True)
         self.zoom_level = zoom_level
         self.bbox = bbox
-        self.output_epsg = output_epsg
+        self.output_crs_id = output_crs_id
         self.tile_coordinate = TileCoordinate(self.zoom_level, self.bbox)
         self.params_for_creating_geotiff = []
 
@@ -147,5 +145,5 @@ class ElevationTileConverter:
             y_length,
         )
 
-        if not self.output_epsg == "EPSG:3857":
-            geotiff.resampling("EPSG:3857", self.output_epsg)
+        if not self.output_crs_id == "EPSG:3857":
+            geotiff.reprojection("EPSG:3857", self.output_crs_id)
