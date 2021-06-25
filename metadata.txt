@@ -7,7 +7,7 @@ name=ElevationTile4JP
 qgisMinimumVersion=3.16
 description=Convert elevation tiles provided by Geospatial Information Authority of Japan(GSI) to GeoTiff format DEM.
 version=1.0
-author=MIERUNE.Inc
+author=MIERUNE Inc.
 email=info@mierune.co.jp
 
 about=Geospatial Information Authority of Japan(GSI) provides elevation tile as a XYZ tile. This plugin fetch the tiles and convert and merge them to GeoTiff format DEM. The extent will specified the map canvas. <a href="https://maps.gsi.go.jp/development/ichiran.html#dem">国土地理院が提供する標高タイル</a>を GeoTIFF形式のDEM に変換します。取得範囲はマップキャンバスの表示領域です。
