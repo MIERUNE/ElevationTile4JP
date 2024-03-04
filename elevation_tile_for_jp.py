@@ -37,8 +37,12 @@ class ElevationTileForJP:
         self.iface = iface
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
+
         # initialize locale
-        locale = QSettings().value('locale/userLocale')[0:2]
+        if QSettings().value('locale/userLocale') is not None:
+            locale = QSettings().value('locale/userLocale')[0:2]
+        else:
+            locale = 'en'
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
