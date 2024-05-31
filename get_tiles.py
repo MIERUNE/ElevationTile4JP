@@ -56,11 +56,8 @@ class GetTilesWithinMapCanvas:
         self.dlg.mQgsProjectionSelectionWidget_output_crs.setCrs(
             self.project.crs())
 
-        for i in range(0, 15):
-            self.dlg.comboBox_zoomlevel.addItem(str(i))
-
-        self.dlg.comboBox_zoomlevel.setCurrentText(
-            str(self.get_current_zoom()))
+        # コンボボックスにズームレベルを設定
+        self.setup_zoom_level_combo_box()
 
         # ダイアログのボタンボックスがaccepted（OK）されたらcalcが作動
         self.dlg.button_box.accepted.connect(self.calc)
@@ -150,3 +147,16 @@ class GetTilesWithinMapCanvas:
         upper_right = coord_transform.transform(bbox[2], bbox[3])
 
         return [lower_left.x(), lower_left.y(), upper_right.x(), upper_right.y()]
+
+    # コンボボックスにズームレベルを設定するメソッド
+    def setup_zoom_level_combo_box(self):
+        max_zoom_level = 14
+        current_zoom_level = self.get_current_zoom()
+
+        for i in range(0, max_zoom_level + 1):
+            self.dlg.comboBox_zoomlevel.addItem(str(i))
+
+        if current_zoom_level > max_zoom_level:
+            current_zoom_level = max_zoom_level
+
+        self.dlg.comboBox_zoomlevel.setCurrentText(str(current_zoom_level))
