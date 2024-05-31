@@ -26,6 +26,7 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
+from PyQt5.QtCore import Qt
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'elevation_tile_for_jp_dialog_base.ui'))
@@ -35,3 +36,4 @@ class ElevationTileforJPDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         super(ElevationTileforJPDialog, self).__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint)
