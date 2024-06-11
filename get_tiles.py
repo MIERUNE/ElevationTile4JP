@@ -160,14 +160,6 @@ class GetTilesWithinMapCanvas:
 
     # map_canvasのXY座標のminとmaxを取得
     def get_canvas_bbox(self):
-        # extent = self.iface.mapCanvas().extent()
-        # xmin, xmax, ymin, ymax = (
-        #     float(extent.xMinimum()),
-        #     float(extent.xMaximum()),
-        #     float(extent.yMinimum()),
-        #     float(extent.yMaximum()),
-        # )
-        # return [xmin, ymin, xmax, ymax]
         extent = [
             self.dlg.mExtentGroupBox.outputExtent().xMinimum(),
             self.dlg.mExtentGroupBox.outputExtent().yMinimum(),
