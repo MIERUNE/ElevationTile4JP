@@ -23,11 +23,15 @@
 import os
 from math import log
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from qgis.core import *
-from qgis.gui import *
+
+from qgis.core import (
+    QgsProject,
+    QgsRasterLayer,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsMessageLog,
+)
+from qgis.gui import QgsFileWidget
 
 from .elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
