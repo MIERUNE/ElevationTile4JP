@@ -133,9 +133,6 @@
    </item>
    <item>
     <widget class="QgsExtentGroupBox" name="mExtentGroupBox">
-     <property name="title">
-      <string>領域</string>
-     </property>
     </widget>
    </item>
    <item>
