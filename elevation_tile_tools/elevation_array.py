@@ -17,6 +17,10 @@ class TileQuantityException(Exception):
         )
 
 
+class UserTerminationException(Exception):
+    pass
+
+
 class ElevationArray:
     def __init__(self, zoom_level, start_path, end_path):
         self.max_number_of_tiles = 1000
@@ -60,7 +64,7 @@ class ElevationArray:
                 QMessageBox.Yes,
                 QMessageBox.No,
             ):
-                return
+                raise UserTerminationException
 
         all_array = np.concatenate(
             [

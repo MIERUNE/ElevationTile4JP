@@ -32,7 +32,10 @@ from qgis.gui import *
 from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
 from elevation_tile_tools import ElevationTileConverter
-from elevation_tile_tools.elevation_array import TileQuantityException
+from elevation_tile_tools.elevation_array import (
+    TileQuantityException,
+    UserTerminationException,
+)
 
 
 class GetTilesWithinMapCanvas:
@@ -113,6 +116,8 @@ class GetTilesWithinMapCanvas:
             elevation_tile.calc()
         except TileQuantityException as e:
             QMessageBox.information(None, "Error", str(e))
+            return
+        except UserTerminationException:
             return
 
         # 出力ファイルをマップキャンバスに追加する
