@@ -33,10 +33,10 @@ from qgis.core import (
 )
 from qgis.gui import QgsFileWidget
 
-from .elevation_tile_for_jp_dialog import ElevationTileforJPDialog
+from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
-from .elevation_tile_tools import ElevationTileConverter
-from .elevation_tile_tools.elevation_array import TileQuantityException
+from elevation_tile_tools import ElevationTileConverter
+from elevation_tile_tools.elevation_array import TileQuantityException
 
 
 class GetTilesWithinMapCanvas:
