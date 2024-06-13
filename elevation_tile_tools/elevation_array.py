@@ -2,6 +2,8 @@ import urllib
 
 import numpy as np
 
+from PyQt5.QtWidgets import QMessageBox
+
 
 class TileQuantityException(Exception):
     def __init__(self, max_number_of_tiles, number_of_tiles):
@@ -17,7 +19,8 @@ class TileQuantityException(Exception):
 
 class ElevationArray:
     def __init__(self, zoom_level, start_path, end_path):
-        self.max_number_of_tiles = 100
+        self.max_number_of_tiles = 1000
+        self.large_number_of_tiles = 100
         self.zoom_level = zoom_level
         self.start_path = start_path
         self.end_path = end_path
@@ -45,6 +48,20 @@ class ElevationArray:
 
         if number_of_tiles > self.max_number_of_tiles:
             raise TileQuantityException(self.max_number_of_tiles, number_of_tiles)
+        elif number_of_tiles > self.large_number_of_tiles:
+            message = (
+                f"取得タイル数({number_of_tiles}枚)が多くて処理時間がかかるかもしれません。"
+                "ダウンロードしますか？"
+            )
+            if QMessageBox.No == QMessageBox.question(
+                None,
+                "確認",
+                message,
+                QMessageBox.Yes,
+                QMessageBox.No,
+            ):
+                return
+
         all_array = np.concatenate(
             [
                 np.concatenate(
