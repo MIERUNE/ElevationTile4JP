@@ -9,8 +9,12 @@ class TileQuantityException(Exception):
         self.max_number_of_tiles = max_number_of_tiles
 
     def __str__(self):
-        return ("The number of tiles to get is too large. \n"
-                f"Maximum number of tiles to get is {self.max_number_of_tiles}. Intended to get {self.number_of_tiles} tiles.")
+        return (
+            "The number of tiles to get is too large. \n"
+            f"Maximum number of tiles to get is {self.max_number_of_tiles}. \n"
+            f"Intended to get {self.number_of_tiles} tiles.\n\n"
+            "取得タイル数が多すぎます。\n取得領域を狭くするか、ズームレベルを小さくしてください。"
+        )
 
 
 class ElevationArray:
@@ -24,11 +28,11 @@ class ElevationArray:
     @staticmethod
     def fetch_tile(z, x, y):
         tile_URL = "https://cyberjapandata.gsi.go.jp/xyz/dem/{}/{}/{}.txt".format(
-            z, x, y)
+            z, x, y
+        )
         try:
             csv_file = urllib.request.urlopen(tile_URL)
-            array = np.genfromtxt(
-                csv_file, delimiter=",", filling_values=-9999)
+            array = np.genfromtxt(csv_file, delimiter=",", filling_values=-9999)
         except urllib.error.HTTPError:
             array = np.full((256, 256), -9999)
         return array
@@ -42,12 +46,19 @@ class ElevationArray:
         print("number of tiles:{}".format(number_of_tiles))
 
         if number_of_tiles > self.max_number_of_tiles:
-            raise TileQuantityException(
-                self.max_number_of_tiles, number_of_tiles)
-        all_array = np.concatenate([np.concatenate([self.fetch_tile(
-            self.zoom_level, x, y) for y in y_length], axis=0) for x in x_length], axis=1)
+            raise TileQuantityException(self.max_number_of_tiles, number_of_tiles)
+        all_array = np.concatenate(
+            [
+                np.concatenate(
+                    [self.fetch_tile(self.zoom_level, x, y) for y in y_length], axis=0
+                )
+                for x in x_length
+            ],
+            axis=1,
+        )
 
         if (all_array == -9999).all():
             raise Exception(
-                "The specified extent is out of range from the provided dem tiles")
+                "The specified extent is out of range from the provided dem tiles"
+            )
         return all_array
