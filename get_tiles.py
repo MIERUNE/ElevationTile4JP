@@ -23,11 +23,14 @@
 import os
 from math import log
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from qgis.core import *
-from qgis.gui import *
+from PyQt5.QtWidgets import QMessageBox
+from qgis.core import (
+    QgsProject,
+    QgsRasterLayer,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+)
+from qgis.gui import QgsFileWidget
 
 from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
@@ -59,6 +62,13 @@ class GetTilesWithinMapCanvas:
         # プロジェクトのデフォルトのcrsを格納
         self.dlg.mQgsProjectionSelectionWidget_output_crs.setCrs(self.project.crs())
 
+        # set extent as current map canvas with current CRS
+        # QgsExtentGroupBox
+        self.dlg.mExtentGroupBox.setMapCanvas(iface.mapCanvas())
+        self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs())
+        self.dlg.mExtentGroupBox.setOutputExtentFromCurrent()
+        QgsProject.instance().crsChanged.connect(self.on_map_crs_changed)
+
         # コンボボックスにズームレベルを設定
         self.setup_zoom_level_combo_box()
 
@@ -66,6 +76,11 @@ class GetTilesWithinMapCanvas:
         self.dlg.button_box.accepted.connect(self.calc)
         # ダイアログのボタンボックスがrejected（キャンセル）されたらdlg_cancel()が作動
         self.dlg.button_box.rejected.connect(self.dlg_cancel)
+
+    # update extent crs when updated
+    def on_map_crs_changed(self):
+        self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs()),
+        self.dlg.mExtentGroupBox.setOutputExtentFromCurrent()
 
     # キャンセルクリック
     def dlg_cancel(self):
@@ -143,16 +158,15 @@ class GetTilesWithinMapCanvas:
             round(log(((dpi * inchesPerMeter * maxScalePerPixel) / scale), 2), 0)
         )
 
-    # map_canvasのXY座標のminとmaxを取得
+    # 対象領域のXY座標のminとmaxを取得
     def get_canvas_bbox(self):
-        extent = self.iface.mapCanvas().extent()
-        xmin, xmax, ymin, ymax = (
-            float(extent.xMinimum()),
-            float(extent.xMaximum()),
-            float(extent.yMinimum()),
-            float(extent.yMaximum()),
-        )
-        return [xmin, ymin, xmax, ymax]
+        extent = [
+            self.dlg.mExtentGroupBox.outputExtent().xMinimum(),
+            self.dlg.mExtentGroupBox.outputExtent().yMinimum(),
+            self.dlg.mExtentGroupBox.outputExtent().xMaximum(),
+            self.dlg.mExtentGroupBox.outputExtent().yMaximum(),
+        ]
+        return extent
 
     def transform(self, src_crs, bbox, dst_crs_id="EPSG:4326"):
         dst_crs = QgsCoordinateReferenceSystem(dst_crs_id)
