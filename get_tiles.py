@@ -36,7 +36,10 @@ from qgis.gui import QgsFileWidget
 from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
 from elevation_tile_tools import ElevationTileConverter
-from elevation_tile_tools.elevation_array import TileQuantityException
+from elevation_tile_tools.elevation_array import (
+    TileQuantityException,
+    UserTerminationException,
+)
 
 
 class GetTilesWithinMapCanvas:
@@ -128,11 +131,9 @@ class GetTilesWithinMapCanvas:
         try:
             elevation_tile.calc()
         except TileQuantityException as e:
-            self.iface.messageBar().pushWarning(
-                "ElevationTile4JP",
-                "取得タイル数が多すぎます。取得領域を狭くするか、ズームレベルを小さくしてください。",
-            )
-            QgsMessageLog.logMessage(str(e), tag="ElevationTile4JP")
+            QMessageBox.information(None, "Error", str(e))
+            return
+        except UserTerminationException:
             return
 
         # 出力ファイルをマップキャンバスに追加する
