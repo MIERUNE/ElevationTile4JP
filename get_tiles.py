@@ -23,13 +23,12 @@
 import os
 from math import log
 
-
+from PyQt5.QtWidgets import QMessageBox
 from qgis.core import (
     QgsProject,
     QgsRasterLayer,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
-    QgsMessageLog,
 )
 from qgis.gui import QgsFileWidget
 
