@@ -5,11 +5,16 @@ import numpy as np
 
 import pyproj
 
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import QThread, pyqtSignal
 
 from .elevation_array import ElevationArray
 from .geotiff import GeoTiff
 from .tile_coordinate import TileCoordinate
+
+
+class UserTerminationException(Exception):
+    pass
 
 
 class ElevationTileConverter(QThread):
@@ -99,6 +104,38 @@ class ElevationTileConverter(QThread):
 
         self.elevation_array = ElevationArray(self.zoom_level, start_path, end_path)
         number_of_tiles = self.elevation_array.count_tiles()
+
+        # check number of tiles
+        print("tt", self.elevation_array.max_number_of_tiles)
+        if number_of_tiles > self.elevation_array.max_number_of_tiles:
+            print("over", self.elevation_array.max_number_of_tiles)
+            error_message = (
+                f"取得タイル数({number_of_tiles}枚)が多すぎます。\n"
+                f"上限の{self.elevation_array.max_number_of_tiles}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。"
+            )
+            # QMessageBox.information(None, "Error", error_message)
+            self.processFailed.emit(error_message)
+            # raise TileQuantityException(
+            #     self.elevation_array.max_number_of_tiles, number_of_tiles
+            # )
+
+        # elif number_of_tiles > self.large_number_of_tiles:
+
+        #     message = (
+        #         f"取得タイル数({number_of_tiles}枚)が多いため、処理に時間がかかる可能性があります。"
+        #         "ダウンロードを実行しますか？"
+        #     )
+        #     print(message)
+        #     if QMessageBox.No == QMessageBox.question(
+        #         None,
+        #         "確認",
+        #         message,
+        #         QMessageBox.Yes,
+        #         QMessageBox.No,
+        #     ):
+        #         self.processFinished.emit()
+        #         return
+
         self.setMaximum.emit(number_of_tiles)
         self.postMessage.emit("集計中")
         self.setAbortable.emit(True)

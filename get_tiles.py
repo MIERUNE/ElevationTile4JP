@@ -35,8 +35,7 @@ from qgis.gui import QgsFileWidget
 from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
 from elevation_tile_tools import ElevationTileConverter
-from elevation_tile_tools.elevation_array import (
-    TileQuantityException,
+from elevation_tile_tools.elevation_tile_converter import (
     UserTerminationException,
 )
 
@@ -136,18 +135,16 @@ class GetTilesWithinMapCanvas:
         thread.setAbortable.connect(progress_dialog.set_abortable)
         thread.processFinished.connect(progress_dialog.close)
         thread.processFailed.connect(
-            lambda error_message: QMessageBox.information(
-                self.main, "エラー", f"エラーが発生しました。\n\n{error_message}"
-            )
+            lambda error_message: [
+                progress_dialog.close(),
+                QMessageBox.information(None, "エラー", error_message),
+            ]
         )
 
         # 処理の実行
         try:
             thread.start()
             progress_dialog.exec_()
-        except TileQuantityException as e:
-            QMessageBox.information(None, "Error", str(e))
-            return
         except UserTerminationException:
             return
 
