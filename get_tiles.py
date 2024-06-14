@@ -158,7 +158,7 @@ class GetTilesWithinMapCanvas:
             round(log(((dpi * inchesPerMeter * maxScalePerPixel) / scale), 2), 0)
         )
 
-    # map_canvasのXY座標のminとmaxを取得
+    # 対象領域のXY座標のminとmaxを取得
     def get_canvas_bbox(self):
         extent = [
             self.dlg.mExtentGroupBox.outputExtent().xMinimum(),
