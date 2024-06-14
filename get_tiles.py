@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 from math import log
 
@@ -31,7 +32,10 @@ from qgis.gui import *
 from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
 from elevation_tile_tools import ElevationTileConverter
-from elevation_tile_tools.elevation_array import TileQuantityException
+from elevation_tile_tools.elevation_array import (
+    TileQuantityException,
+    UserTerminationException,
+)
 
 
 class GetTilesWithinMapCanvas:
@@ -49,12 +53,11 @@ class GetTilesWithinMapCanvas:
         # 出力ファイルの指定が出来るようにする
         self.dlg.mQgsFileWidget_output.setFilter("*.tiff")
         self.dlg.mQgsFileWidget_output.setStorageMode(
-            QgsFileWidget.StorageMode.SaveFile)
-        self.dlg.mQgsFileWidget_output.setDialogTitle(
-            "保存ファイルを選択してください")
+            QgsFileWidget.StorageMode.SaveFile
+        )
+        self.dlg.mQgsFileWidget_output.setDialogTitle("保存ファイルを選択してください")
         # プロジェクトのデフォルトのcrsを格納
-        self.dlg.mQgsProjectionSelectionWidget_output_crs.setCrs(
-            self.project.crs())
+        self.dlg.mQgsProjectionSelectionWidget_output_crs.setCrs(self.project.crs())
 
         # コンボボックスにズームレベルを設定
         self.setup_zoom_level_combo_box()
@@ -80,68 +83,80 @@ class GetTilesWithinMapCanvas:
         # 入力値のバリデーション
         if geotiff_output_path == "":
             self.iface.messageBar().pushWarning(
-                u"ElevationTile4JP", u"出力ファイル名を指定してください。")
+                "ElevationTile4JP", "出力ファイル名を指定してください。"
+            )
             return
 
         output_crs_isvalid = output_crs.isValid()
         if not output_crs_isvalid:
             self.iface.messageBar().pushWarning(
-                u"ElevationTile4JP", u"出力ファイルの座標系が指定されていません。座標系を指定してください。")
+                "ElevationTile4JP",
+                "出力ファイルの座標系が指定されていません。座標系を指定してください。",
+            )
             return
 
         # 標準時子午線を跨ぐ領域指定はタイルを取得できないので処理を中断する
         xmin, _, xmax, _ = bbox
         if xmin > xmax:
             self.iface.messageBar().pushWarning(
-                u"ElevationTile4JP", u"タイル取得範囲が不正です。マップキャンバスには標準時子午線を跨がない範囲を表示してください。")
+                "ElevationTile4JP",
+                "タイル取得範囲が不正です。マップキャンバスには標準時子午線を跨がない範囲を表示してください。",
+            )
             return
 
         elevation_tile = ElevationTileConverter(
             output_path=geotiff_output_path,
             output_crs_id=output_crs.authid(),
             zoom_level=zoom_level,
-            bbox=bbox
+            bbox=bbox,
         )
 
         # 処理の実行
         try:
             elevation_tile.calc()
         except TileQuantityException as e:
-            self.iface.messageBar().pushWarning(
-                u"ElevationTile4JP", u"取得タイル数が多すぎます。取得領域を狭くするか、ズームレベルを小さくしてください。")
-            QgsMessageLog.logMessage(str(e), tag="ElevationTile4JP")
+            QMessageBox.information(None, "Error", str(e))
+            return
+        except UserTerminationException:
             return
 
         # 出力ファイルをマップキャンバスに追加する
-        self.project.addMapLayer(QgsRasterLayer(geotiff_output_path, os.path.splitext(
-            os.path.basename(geotiff_output_path))[0]))
+        self.project.addMapLayer(
+            QgsRasterLayer(
+                geotiff_output_path,
+                os.path.splitext(os.path.basename(geotiff_output_path))[0],
+            )
+        )
 
         self.dlg_cancel()
 
         self.iface.messageBar().pushInfo(
-            u"ElevationTile4JP", u"GeoTiff形式のDEMを出力しました。")
+            "ElevationTile4JP", "GeoTiff形式のDEMを出力しました。"
+        )
 
     def get_current_zoom(self):
         scale = self.iface.mapCanvas().scale()
         dpi = self.iface.mainWindow().physicalDpiX()
         maxScalePerPixel = 156543.04
         inchesPerMeter = 39.37
-        return int(round(log(((dpi * inchesPerMeter * maxScalePerPixel) / scale), 2), 0))
+        return int(
+            round(log(((dpi * inchesPerMeter * maxScalePerPixel) / scale), 2), 0)
+        )
 
     # map_canvasのXY座標のminとmaxを取得
     def get_canvas_bbox(self):
         extent = self.iface.mapCanvas().extent()
-        xmin, xmax, ymin, ymax = float(
-            extent.xMinimum()), float(
-            extent.xMaximum()), float(
-            extent.yMinimum()), float(
-                extent.yMaximum())
+        xmin, xmax, ymin, ymax = (
+            float(extent.xMinimum()),
+            float(extent.xMaximum()),
+            float(extent.yMinimum()),
+            float(extent.yMaximum()),
+        )
         return [xmin, ymin, xmax, ymax]
 
     def transform(self, src_crs, bbox, dst_crs_id="EPSG:4326"):
         dst_crs = QgsCoordinateReferenceSystem(dst_crs_id)
-        coord_transform = QgsCoordinateTransform(
-            src_crs, dst_crs, self.project)
+        coord_transform = QgsCoordinateTransform(src_crs, dst_crs, self.project)
 
         lower_left = coord_transform.transform(bbox[0], bbox[1])
         upper_right = coord_transform.transform(bbox[2], bbox[3])
