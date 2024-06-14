@@ -68,12 +68,7 @@ class GetTilesWithinMapCanvas:
         self.dlg.mExtentGroupBox.setMapCanvas(iface.mapCanvas())
         self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs())
         self.dlg.mExtentGroupBox.setOutputExtentFromCurrent()
-        QgsProject.instance().crsChanged.connect(
-            lambda: [
-                self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs()),
-                self.dlg.mExtentGroupBox.setOutputExtentFromCurrent(),
-            ]
-        )
+        QgsProject.instance().crsChanged.connect(self.on_map_crs_changed)
 
         # コンボボックスにズームレベルを設定
         self.setup_zoom_level_combo_box()
@@ -82,6 +77,11 @@ class GetTilesWithinMapCanvas:
         self.dlg.button_box.accepted.connect(self.calc)
         # ダイアログのボタンボックスがrejected（キャンセル）されたらdlg_cancel()が作動
         self.dlg.button_box.rejected.connect(self.dlg_cancel)
+
+    # update extent crs when updated
+    def on_map_crs_changed(self):
+        self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs()),
+        self.dlg.mExtentGroupBox.setOutputExtentFromCurrent()
 
     # キャンセルクリック
     def dlg_cancel(self):
