@@ -12,8 +12,8 @@ class TileQuantityException(Exception):
 
     def __str__(self):
         return (
-            f"取得タイル数({self.number_of_tiles}枚)が{self.max_number_of_tiles}枚に超えて多すぎます。\n"
-            "取得領域を狭くするか、ズームレベルを小さくしてください。"
+            f"取得タイル数({self.number_of_tiles}枚)が多すぎます。\n"
+            "上限の{self.max_number_of_tiles}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。"
         )
 
 
