@@ -40,6 +40,8 @@ from elevation_tile_tools.elevation_array import (
     UserTerminationException,
 )
 
+from progress_dialog import ProgressDialog
+
 
 class GetTilesWithinMapCanvas:
 
@@ -119,16 +121,30 @@ class GetTilesWithinMapCanvas:
             )
             return
 
-        elevation_tile = ElevationTileConverter(
+        thread = ElevationTileConverter(
             output_path=geotiff_output_path,
             output_crs_id=output_crs.authid(),
             zoom_level=zoom_level,
             bbox=bbox,
         )
+        progress_dialog = ProgressDialog(thread.set_abort_flag)
+        progress_dialog.set_abortable(False)
+
+        thread.setMaximum.connect(progress_dialog.set_maximum)
+        thread.addProgress.connect(progress_dialog.add_progress)
+        thread.postMessage.connect(progress_dialog.set_message)
+        thread.setAbortable.connect(progress_dialog.set_abortable)
+        thread.processFinished.connect(progress_dialog.close)
+        thread.processFailed.connect(
+            lambda error_message: QMessageBox.information(
+                self.main, "エラー", f"エラーが発生しました。\n\n{error_message}"
+            )
+        )
 
         # 処理の実行
         try:
-            elevation_tile.calc()
+            thread.start()
+            progress_dialog.exec_()
         except TileQuantityException as e:
             QMessageBox.information(None, "Error", str(e))
             return
