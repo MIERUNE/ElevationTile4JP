@@ -52,8 +52,8 @@ class ElevationArray:
             raise TileQuantityException(self.max_number_of_tiles, number_of_tiles)
         elif number_of_tiles > self.large_number_of_tiles:
             message = (
-                f"取得タイル数({number_of_tiles}枚)が多くて処理時間がかかるかもしれません。"
-                "ダウンロードしますか？"
+                f"取得タイル数({number_of_tiles}枚)が多いため、処理に時間がかかるかもしれません。"
+                "ダウンロードを実行しますか？"
             )
             if QMessageBox.No == QMessageBox.question(
                 None,
