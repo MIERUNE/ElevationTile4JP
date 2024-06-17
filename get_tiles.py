@@ -35,9 +35,7 @@ from qgis.gui import QgsFileWidget
 from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
 from elevation_tile_tools import ElevationTileConverter
-from elevation_tile_tools.elevation_tile_converter import (
-    UserTerminationException,
-)
+
 
 from progress_dialog import ProgressDialog
 
@@ -78,6 +76,8 @@ class GetTilesWithinMapCanvas:
         # ダイアログのボタンボックスがrejected（キャンセル）されたらdlg_cancel()が作動
         self.dlg.button_box.rejected.connect(self.dlg_cancel)
 
+        self.process_interrupted = False
+
     # update extent crs when updated
     def on_map_crs_changed(self):
         self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs()),
@@ -87,6 +87,10 @@ class GetTilesWithinMapCanvas:
     def dlg_cancel(self):
         # ダイアログを非表示
         self.dlg.hide()
+
+    def set_interrupted(self):
+        print("interrupt...")
+        self.process_interrupted = True
 
     # 一括処理を行うメソッド
     def calc(self):
@@ -139,14 +143,19 @@ class GetTilesWithinMapCanvas:
             lambda error_message: [
                 progress_dialog.close(),
                 QMessageBox.information(None, "エラー", error_message),
+                thread.exit(),
+                self.set_interrupted(),
             ]
         )
 
         # 処理の実行
-        try:
-            thread.start()
-            progress_dialog.exec_()
-        except UserTerminationException:
+        thread.start()
+        progress_dialog.exec_()
+        print("interrupted", self.process_interrupted)
+
+        # do not import if processed has been interrupted
+        if self.process_interrupted:
+            self.dlg_cancel()
             return
 
         # 出力ファイルをマップキャンバスに追加する
@@ -157,11 +166,11 @@ class GetTilesWithinMapCanvas:
             )
         )
 
-        self.dlg_cancel()
-
         self.iface.messageBar().pushInfo(
             "ElevationTile4JP", "GeoTiff形式のDEMを出力しました。"
         )
+
+        self.dlg_cancel()
 
     def get_current_zoom(self):
         scale = self.iface.mapCanvas().scale()
