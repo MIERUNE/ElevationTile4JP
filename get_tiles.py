@@ -89,8 +89,34 @@ class GetTilesWithinMapCanvas:
         self.dlg.hide()
 
     def set_interrupted(self):
-        print("interrupt...")
         self.process_interrupted = True
+
+    def warning_tiles_amount(self, message):
+        if QMessageBox.No == QMessageBox.question(
+            None,
+            "確認",
+            message,
+            QMessageBox.Yes,
+            QMessageBox.No,
+        ):
+            self.set_interrupted()
+
+    def confirm_abort(self):
+        if QMessageBox.Yes == QMessageBox.question(
+            None,
+            "確認",
+            "処理を中断し、以降の処理をスキップしてよろしいですか？",
+            QMessageBox.Yes,
+            QMessageBox.No,
+        ):
+            self.set_interrupted()
+
+    def abort_process(self, thread, progress_dialog):
+        if self.process_interrupted:
+            thread.terminate()
+            progress_dialog.abort_dialog()
+            self.dlg_cancel()
+            return
 
     # 一括処理を行うメソッド
     def calc(self):
@@ -132,19 +158,30 @@ class GetTilesWithinMapCanvas:
         )
         progress_dialog = ProgressDialog(thread.set_abort_flag)
         progress_dialog.set_abortable(False)
+        progress_dialog.abortButton.clicked.connect(
+            lambda: [
+                self.confirm_abort(),
+                self.abort_process(thread, progress_dialog),
+            ]
+        )
 
         thread.setMaximum.connect(progress_dialog.set_maximum)
         thread.addProgress.connect(progress_dialog.add_progress)
         thread.postMessage.connect(progress_dialog.set_message)
         thread.setAbortable.connect(progress_dialog.set_abortable)
         thread.processFinished.connect(progress_dialog.close)
-        thread.warningTiles.connect(progress_dialog.warning_tiles)
+        thread.warningTiles.connect(
+            lambda message: [
+                self.warning_tiles_amount(message),
+                self.abort_process(thread, progress_dialog),
+            ]
+        )
         thread.processFailed.connect(
             lambda error_message: [
                 progress_dialog.close(),
                 QMessageBox.information(None, "エラー", error_message),
-                thread.exit(),
                 self.set_interrupted(),
+                self.abort_process(thread, progress_dialog),
             ]
         )
 
@@ -155,7 +192,6 @@ class GetTilesWithinMapCanvas:
 
         # do not import if processed has been interrupted
         if self.process_interrupted:
-            self.dlg_cancel()
             return
 
         # 出力ファイルをマップキャンバスに追加する
