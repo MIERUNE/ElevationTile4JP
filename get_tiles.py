@@ -113,7 +113,8 @@ class GetTilesWithinMapCanvas:
 
     def abort_process(self, thread, progress_dialog):
         if self.process_interrupted:
-            thread.terminate()
+            # thread.terminate()
+            thread.exit()
             progress_dialog.abort_dialog()
             self.dlg_cancel()
             return
