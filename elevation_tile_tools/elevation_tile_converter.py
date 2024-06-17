@@ -5,7 +5,6 @@ import numpy as np
 
 import pyproj
 
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import QThread, pyqtSignal
 
 from .elevation_array import ElevationArray
@@ -114,11 +113,7 @@ class ElevationTileConverter(QThread):
                 f"取得タイル数({number_of_tiles}枚)が多すぎます。\n"
                 f"上限の{self.elevation_array.max_number_of_tiles}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。"
             )
-            # QMessageBox.information(None, "Error", error_message)
             self.processFailed.emit(error_message)
-            # raise TileQuantityException(
-            #     self.elevation_array.max_number_of_tiles, number_of_tiles
-            # )
 
         elif number_of_tiles > self.elevation_array.large_number_of_tiles:
             message = (
