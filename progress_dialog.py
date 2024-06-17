@@ -49,6 +49,7 @@ class ProgressDialog(QDialog):
                 self.set_abort_flag_callback()
                 self.abortButton.setEnabled(False)
                 self.abortButton.setText("中断待機中...")
+                self.close()
 
     def set_maximum(self, value: int):
         self.progressBar.setMaximum(value)
