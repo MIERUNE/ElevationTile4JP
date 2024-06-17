@@ -23,6 +23,7 @@ class ElevationTileConverter(QThread):
     postMessage = pyqtSignal(str)
     processFinished = pyqtSignal()
     setAbortable = pyqtSignal(bool)
+    warningTiles = pyqtSignal(str)
     processFailed = pyqtSignal(str)
 
     def __init__(
@@ -106,9 +107,9 @@ class ElevationTileConverter(QThread):
         number_of_tiles = self.elevation_array.count_tiles()
 
         # check number of tiles
-        print("tt", self.elevation_array.max_number_of_tiles)
+
         if number_of_tiles > self.elevation_array.max_number_of_tiles:
-            print("over", self.elevation_array.max_number_of_tiles)
+
             error_message = (
                 f"取得タイル数({number_of_tiles}枚)が多すぎます。\n"
                 f"上限の{self.elevation_array.max_number_of_tiles}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。"
@@ -119,22 +120,12 @@ class ElevationTileConverter(QThread):
             #     self.elevation_array.max_number_of_tiles, number_of_tiles
             # )
 
-        # elif number_of_tiles > self.large_number_of_tiles:
-
-        #     message = (
-        #         f"取得タイル数({number_of_tiles}枚)が多いため、処理に時間がかかる可能性があります。"
-        #         "ダウンロードを実行しますか？"
-        #     )
-        #     print(message)
-        #     if QMessageBox.No == QMessageBox.question(
-        #         None,
-        #         "確認",
-        #         message,
-        #         QMessageBox.Yes,
-        #         QMessageBox.No,
-        #     ):
-        #         self.processFinished.emit()
-        #         return
+        elif number_of_tiles > self.elevation_array.large_number_of_tiles:
+            message = (
+                f"取得タイル数({number_of_tiles}枚)が多いため、処理に時間がかかる可能性があります。"
+                "ダウンロードを実行しますか？"
+            )
+            self.warningTiles.emit(message)
 
         self.setMaximum.emit(number_of_tiles)
         self.postMessage.emit("集計中")

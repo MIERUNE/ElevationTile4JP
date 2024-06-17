@@ -134,6 +134,7 @@ class GetTilesWithinMapCanvas:
         thread.postMessage.connect(progress_dialog.set_message)
         thread.setAbortable.connect(progress_dialog.set_abortable)
         thread.processFinished.connect(progress_dialog.close)
+        thread.warningTiles.connect(progress_dialog.warning_tiles)
         thread.processFailed.connect(
             lambda error_message: [
                 progress_dialog.close(),

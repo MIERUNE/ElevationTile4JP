@@ -51,6 +51,20 @@ class ProgressDialog(QDialog):
                 self.abortButton.setText("中断待機中...")
                 self.close()
 
+    def warning_tiles(self, message):
+        if QMessageBox.No == QMessageBox.question(
+            self,
+            "確認",
+            message,
+            QMessageBox.Yes,
+            QMessageBox.No,
+        ):
+            if self.abortButton.isEnabled():  # abort if possible
+                self.set_abort_flag_callback()
+                self.abortButton.setEnabled(False)
+                self.abortButton.setText("中断待機中...")
+                self.close()
+
     def set_maximum(self, value: int):
         self.progressBar.setMaximum(value)
 
