@@ -122,17 +122,19 @@ class ElevationTileConverter(QThread):
                 self.addProgress.emit(1)
             tiles.append(np.concatenate(row_tiles, axis=0))
 
-        np_array = np.concatenate(tiles, axis=1)
+        self.np_array = np.concatenate(tiles, axis=1)
 
-        if (np_array == -9999).all():
+        if (self.np_array == -9999).all():
             raise Exception(
                 "The specified extent is out of range from the provided dem tiles"
             )
 
         self.postMessage.emit("終了処理中")
+        self.processFinished.emit()
 
-        x_length = np_array.shape[1]
-        y_length = np_array.shape[0]
+    def create_geotiff(self):
+        x_length = self.np_array.shape[1]
+        y_length = self.np_array.shape[0]
 
         lower_left_latlon = self.tile_to_pixel_coordinate_of_corner(
             self.zoom_level, self.lower_left_tile_path[0], self.lower_left_tile_path[1]
@@ -165,7 +167,7 @@ class ElevationTileConverter(QThread):
             pixel_size_y = -(abs(upper_right_XY[1]) + abs(lower_left_XY[1])) / y_length
 
         self.params_for_creating_geotiff = [
-            np_array,
+            self.np_array,
             lower_left_XY[0],
             upper_right_XY[1],
             pixel_size_x,
@@ -176,7 +178,7 @@ class ElevationTileConverter(QThread):
 
         geotiff = GeoTiff(self.output_path)
         geotiff.write_geotiff(
-            np_array,
+            self.np_array,
             lower_left_XY[0],
             upper_right_XY[1],
             pixel_size_x,
@@ -187,5 +189,3 @@ class ElevationTileConverter(QThread):
 
         if not self.output_crs_id == "EPSG:3857":
             geotiff.reprojection("EPSG:3857", self.output_crs_id)
-
-        self.processFinished.emit()

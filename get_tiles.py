@@ -103,7 +103,6 @@ class GetTilesWithinMapCanvas:
 
     def abort_process(self, thread, progress_dialog):
         if self.process_interrupted:
-            # thread.terminate()
             thread.exit()
             progress_dialog.abort_dialog()
             self.dlg_cancel()
@@ -195,13 +194,16 @@ class GetTilesWithinMapCanvas:
             ]
         )
 
-        # 処理の実行
+        # タイル取得処理の実行
         thread.start()
         progress_dialog.exec_()
 
         # do not import if processed has been interrupted
         if self.process_interrupted:
             return
+
+        # Tiffを作成
+        thread.create_geotiff()
 
         # 出力ファイルをマップキャンバスに追加する
         self.project.addMapLayer(
