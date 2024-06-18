@@ -55,6 +55,9 @@ class ElevationTileConverter(QThread):
         self.elevation_array = ElevationArray(self.zoom_level, start_path, end_path)
         self.number_of_tiles = self.elevation_array.count_tiles()
 
+    def set_abort_flag(self, flag=True):
+        self.abort_flag = flag
+
     # 緯度経度をWebメルカトルのXY座標に変換
     @staticmethod
     def transform_latlon_to_xy(latlon):
