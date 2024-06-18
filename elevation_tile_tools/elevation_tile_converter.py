@@ -107,27 +107,30 @@ class ElevationTileConverter(QThread):
 
     # 一括処理を行うメソッド
     def run(self):
+        try:
+            self.setMaximum.emit(self.number_of_tiles)
+            self.postMessage.emit("集計中")
+            self.setAbortable.emit(True)
 
-        self.setMaximum.emit(self.number_of_tiles)
-        self.postMessage.emit("集計中")
-        self.setAbortable.emit(True)
+            # get elevation tile arrays
+            tiles = []
+            for x in self.elevation_array.x_length:
+                row_tiles = []
+                for y in self.elevation_array.y_length:
+                    tile = self.elevation_array.fetch_tile(self.zoom_level, x, y)
+                    row_tiles.append(tile)
+                    self.addProgress.emit(1)
+                tiles.append(np.concatenate(row_tiles, axis=0))
 
-        # get elevation tile arrays
-        tiles = []
-        for x in self.elevation_array.x_length:
-            row_tiles = []
-            for y in self.elevation_array.y_length:
-                tile = self.elevation_array.fetch_tile(self.zoom_level, x, y)
-                row_tiles.append(tile)
-                self.addProgress.emit(1)
-            tiles.append(np.concatenate(row_tiles, axis=0))
+            self.np_array = np.concatenate(tiles, axis=1)
 
-        self.np_array = np.concatenate(tiles, axis=1)
-
-        if (self.np_array == -9999).all():
-            raise Exception(
-                "The specified extent is out of range from the provided dem tiles"
-            )
+            if (self.np_array == -9999).all():
+                error_message = (
+                    "The specified extent is out of range from the provided dem tiles"
+                )
+                self.processFailed.emit(error_message)
+        except Exception as e:
+            self.processFailed.emit(e)
 
         self.postMessage.emit("終了処理中")
         self.processFinished.emit()
