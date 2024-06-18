@@ -4,8 +4,6 @@ import numpy as np
 
 
 class ElevationArray:
-    max_number_of_tiles = 1000
-    large_number_of_tiles = 100
 
     def __init__(self, zoom_level, start_path, end_path):
         self.zoom_level = zoom_level

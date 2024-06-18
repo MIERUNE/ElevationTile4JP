@@ -91,16 +91,6 @@ class GetTilesWithinMapCanvas:
     def set_interrupted(self):
         self.process_interrupted = True
 
-    def warning_tiles_amount(self, message):
-        if QMessageBox.No == QMessageBox.question(
-            None,
-            "確認",
-            message,
-            QMessageBox.Yes,
-            QMessageBox.No,
-        ):
-            self.set_interrupted()
-
     def confirm_abort(self):
         if QMessageBox.Yes == QMessageBox.question(
             None,
@@ -157,6 +147,31 @@ class GetTilesWithinMapCanvas:
             zoom_level=zoom_level,
             bbox=bbox,
         )
+
+        # check number of tiles
+        if thread.number_of_tiles > thread.max_number_of_tiles:
+
+            error_message = (
+                f"取得タイル数({thread.number_of_tiles}枚)が多すぎます。\n"
+                f"上限の{thread.max_number_of_tiles}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。"
+            )
+            QMessageBox.information(None, "エラー", error_message)
+            return
+
+        elif thread.number_of_tiles > thread.large_number_of_tiles:
+            message = (
+                f"取得タイル数({thread.number_of_tiles}枚)が多いため、処理に時間がかかる可能性があります。"
+                "ダウンロードを実行しますか？"
+            )
+            if QMessageBox.No == QMessageBox.question(
+                None,
+                "確認",
+                message,
+                QMessageBox.Yes,
+                QMessageBox.No,
+            ):
+                return
+
         progress_dialog = ProgressDialog(thread.set_abort_flag)
         progress_dialog.set_abortable(False)
         progress_dialog.abortButton.clicked.connect(
@@ -171,12 +186,6 @@ class GetTilesWithinMapCanvas:
         thread.postMessage.connect(progress_dialog.set_message)
         thread.setAbortable.connect(progress_dialog.set_abortable)
         thread.processFinished.connect(progress_dialog.close)
-        thread.warningTiles.connect(
-            lambda message: [
-                self.warning_tiles_amount(message),
-                self.abort_process(thread, progress_dialog),
-            ]
-        )
         thread.processFailed.connect(
             lambda error_message: [
                 progress_dialog.close(),
@@ -189,7 +198,6 @@ class GetTilesWithinMapCanvas:
         # 処理の実行
         thread.start()
         progress_dialog.exec_()
-        print("interrupted", self.process_interrupted)
 
         # do not import if processed has been interrupted
         if self.process_interrupted:

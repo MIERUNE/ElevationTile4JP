@@ -22,8 +22,10 @@ class ElevationTileConverter(QThread):
     postMessage = pyqtSignal(str)
     processFinished = pyqtSignal()
     setAbortable = pyqtSignal(bool)
-    warningTiles = pyqtSignal(str)
     processFailed = pyqtSignal(str)
+
+    max_number_of_tiles = 1000
+    large_number_of_tiles = 100
 
     def __init__(
         self,
@@ -47,6 +49,13 @@ class ElevationTileConverter(QThread):
         self.output_crs_id = output_crs_id
         self.tile_coordinate = TileCoordinate(self.zoom_level, self.bbox)
         self.params_for_creating_geotiff = []
+
+        start_path, end_path, self.lower_left_tile_path, self.upper_right_tile_path = (
+            self.tile_coordinate.calc_tile_coordinates()
+        )
+
+        self.elevation_array = ElevationArray(self.zoom_level, start_path, end_path)
+        self.number_of_tiles = self.elevation_array.count_tiles()
 
     def set_abort_flag(self, flag=True):
         self.abort_flag = flag
@@ -98,31 +107,8 @@ class ElevationTileConverter(QThread):
 
     # 一括処理を行うメソッド
     def run(self):
-        start_path, end_path, lower_left_tile_path, upper_light_tile_path = (
-            self.tile_coordinate.calc_tile_coordinates()
-        )
 
-        self.elevation_array = ElevationArray(self.zoom_level, start_path, end_path)
-        number_of_tiles = self.elevation_array.count_tiles()
-
-        # check number of tiles
-
-        if number_of_tiles > self.elevation_array.max_number_of_tiles:
-
-            error_message = (
-                f"取得タイル数({number_of_tiles}枚)が多すぎます。\n"
-                f"上限の{self.elevation_array.max_number_of_tiles}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。"
-            )
-            self.processFailed.emit(error_message)
-
-        elif number_of_tiles > self.elevation_array.large_number_of_tiles:
-            message = (
-                f"取得タイル数({number_of_tiles}枚)が多いため、処理に時間がかかる可能性があります。"
-                "ダウンロードを実行しますか？"
-            )
-            self.warningTiles.emit(message)
-
-        self.setMaximum.emit(number_of_tiles)
+        self.setMaximum.emit(self.number_of_tiles)
         self.postMessage.emit("集計中")
         self.setAbortable.emit(True)
 
@@ -149,10 +135,12 @@ class ElevationTileConverter(QThread):
         y_length = np_array.shape[0]
 
         lower_left_latlon = self.tile_to_pixel_coordinate_of_corner(
-            self.zoom_level, lower_left_tile_path[0], lower_left_tile_path[1]
+            self.zoom_level, self.lower_left_tile_path[0], self.lower_left_tile_path[1]
         )[0]
         upper_right_latlon = self.tile_to_pixel_coordinate_of_corner(
-            self.zoom_level, upper_light_tile_path[0], upper_light_tile_path[1]
+            self.zoom_level,
+            self.upper_right_tile_path[0],
+            self.upper_right_tile_path[1],
         )[1]
 
         lower_left_XY = self.transform_latlon_to_xy(lower_left_latlon)
