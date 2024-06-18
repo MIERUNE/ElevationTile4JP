@@ -24,6 +24,7 @@ import os
 from math import log
 
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QThread
 from qgis.core import (
     QgsProject,
     QgsRasterLayer,
@@ -35,7 +36,6 @@ from qgis.gui import QgsFileWidget
 from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
 from elevation_tile_tools import ElevationTileConverter
-
 
 from progress_dialog import ProgressDialog
 
@@ -101,7 +101,7 @@ class GetTilesWithinMapCanvas:
         ):
             self.set_interrupted()
 
-    def abort_process(self, thread, progress_dialog):
+    def abort_process(self, thread: QThread, progress_dialog: ProgressDialog) -> None:
         if self.process_interrupted:
             thread.exit()
             progress_dialog.abort_dialog()
@@ -140,6 +140,7 @@ class GetTilesWithinMapCanvas:
             )
             return
 
+        # elevation tiles converter process thread
         thread = ElevationTileConverter(
             output_path=geotiff_output_path,
             output_crs_id=output_crs.authid(),
@@ -149,7 +150,6 @@ class GetTilesWithinMapCanvas:
 
         # check number of tiles
         if thread.number_of_tiles > thread.max_number_of_tiles:
-
             error_message = (
                 f"取得タイル数({thread.number_of_tiles}枚)が多すぎます。\n"
                 f"上限の{thread.max_number_of_tiles}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。"
@@ -171,6 +171,7 @@ class GetTilesWithinMapCanvas:
             ):
                 return
 
+        # initialize process dialof
         progress_dialog = ProgressDialog(thread.set_abort_flag)
         progress_dialog.set_abortable(False)
         progress_dialog.abortButton.clicked.connect(
@@ -180,6 +181,7 @@ class GetTilesWithinMapCanvas:
             ]
         )
 
+        # progress dialog orchestation by process thread
         thread.setMaximum.connect(progress_dialog.set_maximum)
         thread.addProgress.connect(progress_dialog.add_progress)
         thread.postMessage.connect(progress_dialog.set_message)
