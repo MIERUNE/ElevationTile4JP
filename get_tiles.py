@@ -24,6 +24,7 @@ import os
 from math import log
 
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QThread
 from qgis.core import (
     QgsProject,
     QgsRasterLayer,
@@ -35,10 +36,8 @@ from qgis.gui import QgsFileWidget
 from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
 from elevation_tile_tools import ElevationTileConverter
-from elevation_tile_tools.elevation_array import (
-    TileQuantityException,
-    UserTerminationException,
-)
+
+from progress_dialog import ProgressDialog
 
 
 class GetTilesWithinMapCanvas:
@@ -77,6 +76,8 @@ class GetTilesWithinMapCanvas:
         # ダイアログのボタンボックスがrejected（キャンセル）されたらdlg_cancel()が作動
         self.dlg.button_box.rejected.connect(self.dlg_cancel)
 
+        self.process_interrupted = False
+
     # update extent crs when updated
     def on_map_crs_changed(self):
         self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs()),
@@ -86,6 +87,37 @@ class GetTilesWithinMapCanvas:
     def dlg_cancel(self):
         # ダイアログを非表示
         self.dlg.hide()
+
+    def set_interrupted(self):
+        self.process_interrupted = True
+
+    def on_abort_clicked(
+        self, thread: QThread, progress_dialog: ProgressDialog
+    ) -> None:
+        if QMessageBox.Yes == QMessageBox.question(
+            None,
+            "確認",
+            "処理を中断し、以降の処理をスキップしてよろしいですか？",
+            QMessageBox.Yes,
+            QMessageBox.No,
+        ):
+            self.set_interrupted()
+            self.abort_process(thread, progress_dialog)
+
+    def handle_process_failed(
+        self, error_message, thread: QThread, progress_dialog: ProgressDialog
+    ) -> None:
+        progress_dialog.close(),
+        QMessageBox.information(None, "エラー", error_message),
+        self.set_interrupted(),
+        self.abort_process(thread, progress_dialog),
+
+    def abort_process(self, thread: QThread, progress_dialog: ProgressDialog) -> None:
+        if self.process_interrupted:
+            thread.exit()
+            progress_dialog.abort_dialog()
+            self.dlg_cancel()
+            return
 
     # 一括処理を行うメソッド
     def calc(self):
@@ -119,21 +151,68 @@ class GetTilesWithinMapCanvas:
             )
             return
 
-        elevation_tile = ElevationTileConverter(
+        # elevation tiles converter process thread
+        thread = ElevationTileConverter(
             output_path=geotiff_output_path,
             output_crs_id=output_crs.authid(),
             zoom_level=zoom_level,
             bbox=bbox,
         )
 
-        # 処理の実行
-        try:
-            elevation_tile.calc()
-        except TileQuantityException as e:
-            QMessageBox.information(None, "Error", str(e))
+        # check number of tiles
+        if thread.number_of_tiles > thread.max_number_of_tiles:
+            error_message = (
+                f"取得タイル数({thread.number_of_tiles}枚)が多すぎます。\n"
+                f"上限の{thread.max_number_of_tiles}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。"
+            )
+            QMessageBox.information(None, "エラー", error_message)
             return
-        except UserTerminationException:
+
+        elif thread.number_of_tiles > thread.large_number_of_tiles:
+            message = (
+                f"取得タイル数({thread.number_of_tiles}枚)が多いため、処理に時間がかかる可能性があります。"
+                "ダウンロードを実行しますか？"
+            )
+            if QMessageBox.No == QMessageBox.question(
+                None,
+                "確認",
+                message,
+                QMessageBox.Yes,
+                QMessageBox.No,
+            ):
+                return
+
+        # initialize process dialof
+        progress_dialog = ProgressDialog(thread.set_abort_flag)
+        progress_dialog.set_abortable(False)
+        progress_dialog.abortButton.clicked.connect(
+            lambda: [
+                self.on_abort_clicked(thread, progress_dialog),
+            ]
+        )
+
+        # progress dialog orchestation by process thread
+        thread.setMaximum.connect(progress_dialog.set_maximum)
+        thread.addProgress.connect(progress_dialog.add_progress)
+        thread.postMessage.connect(progress_dialog.set_message)
+        thread.setAbortable.connect(progress_dialog.set_abortable)
+        thread.processFinished.connect(progress_dialog.close)
+        thread.processFailed.connect(
+            lambda error_message: [
+                self.handle_process_failed(error_message, thread, progress_dialog)
+            ]
+        )
+
+        # タイル取得処理の実行
+        thread.start()
+        progress_dialog.exec_()
+
+        # do not import if processed has been interrupted
+        if self.process_interrupted:
             return
+
+        # Tiffを作成
+        thread.create_geotiff()
 
         # 出力ファイルをマップキャンバスに追加する
         self.project.addMapLayer(
@@ -143,11 +222,11 @@ class GetTilesWithinMapCanvas:
             )
         )
 
-        self.dlg_cancel()
-
         self.iface.messageBar().pushInfo(
             "ElevationTile4JP", "GeoTiff形式のDEMを出力しました。"
         )
+
+        self.dlg_cancel()
 
     def get_current_zoom(self):
         scale = self.iface.mapCanvas().scale()
