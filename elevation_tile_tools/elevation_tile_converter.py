@@ -154,17 +154,16 @@ class ElevationTileConverter(QThread):
         # どっちもプラス、マイナスなら、絶対値の大きい方から小さい方を引く
         pixel_size_x = None
         pixel_size_y = None
-        if upper_right_XY[0] >= 0 and lower_left_XY[0] >= 0:
-            pixel_size_x = (abs(upper_right_XY[0]) - abs(lower_left_XY[0])) / x_length
-            pixel_size_y = -(abs(upper_right_XY[1]) - abs(lower_left_XY[1])) / y_length
-        elif upper_right_XY[0] <= 0 and lower_left_XY[0] <= 0:
+
+        if (upper_right_XY[0] >= 0 and lower_left_XY[0] >= 0) or (
+            upper_right_XY[0] <= 0 and lower_left_XY[0] <= 0
+        ):
             pixel_size_x = (abs(upper_right_XY[0]) - abs(lower_left_XY[0])) / x_length
             pixel_size_y = -(abs(upper_right_XY[1]) - abs(lower_left_XY[1])) / y_length
         # 片方がプラスなら絶対値を足す
-        elif upper_right_XY[0] <= 0 <= lower_left_XY[0]:
-            pixel_size_x = (abs(upper_right_XY[0]) + abs(lower_left_XY[0])) / x_length
-            pixel_size_y = -(abs(upper_right_XY[1]) + abs(lower_left_XY[1])) / y_length
-        elif upper_right_XY[0] >= 0 >= lower_left_XY[0]:
+        elif (upper_right_XY[0] <= 0 <= lower_left_XY[0]) or (
+            upper_right_XY[0] >= 0 >= lower_left_XY[0]
+        ):
             pixel_size_x = (abs(upper_right_XY[0]) + abs(lower_left_XY[0])) / x_length
             pixel_size_y = -(abs(upper_right_XY[1]) + abs(lower_left_XY[1])) / y_length
 
