@@ -12,11 +12,9 @@ from .geotiff import GeoTiff
 from .tile_coordinate import TileCoordinate
 
 
-class UserTerminationException(Exception):
-    pass
-
-
 class ElevationTileConverter(QThread):
+    # thread signals to progress dialog
+    # use : set maximum value in progress bar: self.setMaximum.emit(110)
     setMaximum = pyqtSignal(int)
     addProgress = pyqtSignal(int)
     postMessage = pyqtSignal(str)
@@ -56,9 +54,6 @@ class ElevationTileConverter(QThread):
 
         self.elevation_array = ElevationArray(self.zoom_level, start_path, end_path)
         self.number_of_tiles = self.elevation_array.count_tiles()
-
-    def set_abort_flag(self, flag=True):
-        self.abort_flag = flag
 
     # 緯度経度をWebメルカトルのXY座標に変換
     @staticmethod
