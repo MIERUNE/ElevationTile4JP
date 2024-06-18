@@ -36,20 +36,6 @@ class ProgressDialog(QDialog):
             return
         super().keyPressEvent(event)
 
-    def on_abort_click(self):
-        if QMessageBox.Yes == QMessageBox.question(
-            self,
-            "確認",
-            "処理を中断し、以降の処理をスキップしてよろしいですか？",
-            QMessageBox.Yes,
-            QMessageBox.No,
-        ):
-            if self.abortButton.isEnabled():  # abort if possible
-                self.set_abort_flag_callback()
-                self.abortButton.setEnabled(False)
-                self.abortButton.setText("中断待機中...")
-                self.close()
-
     def abort_dialog(self):
         if self.abortButton.isEnabled():  # abort if possible
             self.set_abort_flag_callback()
