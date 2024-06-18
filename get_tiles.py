@@ -91,7 +91,9 @@ class GetTilesWithinMapCanvas:
     def set_interrupted(self):
         self.process_interrupted = True
 
-    def confirm_abort(self):
+    def on_abort_clicked(
+        self, thread: QThread, progress_dialog: ProgressDialog
+    ) -> None:
         if QMessageBox.Yes == QMessageBox.question(
             None,
             "確認",
@@ -100,6 +102,15 @@ class GetTilesWithinMapCanvas:
             QMessageBox.No,
         ):
             self.set_interrupted()
+            self.abort_process(thread, progress_dialog)
+
+    def handle_process_failed(
+        self, error_message, thread: QThread, progress_dialog: ProgressDialog
+    ) -> None:
+        progress_dialog.close(),
+        QMessageBox.information(None, "エラー", error_message),
+        self.set_interrupted(),
+        self.abort_process(thread, progress_dialog),
 
     def abort_process(self, thread: QThread, progress_dialog: ProgressDialog) -> None:
         if self.process_interrupted:
@@ -176,8 +187,7 @@ class GetTilesWithinMapCanvas:
         progress_dialog.set_abortable(False)
         progress_dialog.abortButton.clicked.connect(
             lambda: [
-                self.confirm_abort(),
-                self.abort_process(thread, progress_dialog),
+                self.on_abort_clicked(thread, progress_dialog),
             ]
         )
 
@@ -189,10 +199,7 @@ class GetTilesWithinMapCanvas:
         thread.processFinished.connect(progress_dialog.close)
         thread.processFailed.connect(
             lambda error_message: [
-                progress_dialog.close(),
-                QMessageBox.information(None, "エラー", error_message),
-                self.set_interrupted(),
-                self.abort_process(thread, progress_dialog),
+                self.handle_process_failed(error_message, thread, progress_dialog)
             ]
         )
 
