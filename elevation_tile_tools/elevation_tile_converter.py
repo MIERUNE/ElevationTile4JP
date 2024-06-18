@@ -56,6 +56,7 @@ class ElevationTileConverter(QThread):
         self.number_of_tiles = self.elevation_array.count_tiles()
 
     def set_abort_flag(self, flag=True):
+        # used when abort signal is given
         self.abort_flag = flag
 
     # 緯度経度をWebメルカトルのXY座標に変換
