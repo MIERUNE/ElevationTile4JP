@@ -134,6 +134,18 @@ class GetTilesWithinMapCanvas:
             )
             return
 
+        # check if directory exists
+        directory = os.path.dirname(geotiff_output_path)
+        if not os.path.isdir(directory):
+            self.iface.messageBar().pushWarning(
+                "ElevationTile4JP", f"出力フォルダー先が存在していません。\n{directory}"
+            )
+            return
+
+        # Add .tiff to output path if missing
+        if not geotiff_output_path.lower().endswith(".tiff"):
+            geotiff_output_path += ".tiff"
+
         output_crs_isvalid = output_crs.isValid()
         if not output_crs_isvalid:
             self.iface.messageBar().pushWarning(
