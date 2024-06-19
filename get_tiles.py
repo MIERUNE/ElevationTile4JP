@@ -129,16 +129,16 @@ class GetTilesWithinMapCanvas:
 
         # 入力値のバリデーション
         if geotiff_output_path == "":
-            self.iface.messageBar().pushWarning(
-                "ElevationTile4JP", "出力ファイル名を指定してください。"
+            QMessageBox.information(
+                None, "エラー", "出力ファイル名を指定してください。"
             )
             return
 
         # check if directory exists
         directory = os.path.dirname(geotiff_output_path)
         if not os.path.isdir(directory):
-            self.iface.messageBar().pushWarning(
-                "ElevationTile4JP", f"出力フォルダー先が存在していません。\n{directory}"
+            QMessageBox.information(
+                None, "エラー", f"出力フォルダー先が存在していません。\n{directory}"
             )
             return
 
@@ -148,8 +148,9 @@ class GetTilesWithinMapCanvas:
 
         output_crs_isvalid = output_crs.isValid()
         if not output_crs_isvalid:
-            self.iface.messageBar().pushWarning(
-                "ElevationTile4JP",
+            QMessageBox.information(
+                None,
+                "エラー",
                 "出力ファイルの座標系が指定されていません。座標系を指定してください。",
             )
             return
@@ -157,8 +158,9 @@ class GetTilesWithinMapCanvas:
         # 標準時子午線を跨ぐ領域指定はタイルを取得できないので処理を中断する
         xmin, _, xmax, _ = bbox
         if xmin > xmax:
-            self.iface.messageBar().pushWarning(
-                "ElevationTile4JP",
+            QMessageBox.information(
+                None,
+                "エラー",
                 "タイル取得範囲が不正です。マップキャンバスには標準時子午線を跨がない範囲を表示してください。",
             )
             return
