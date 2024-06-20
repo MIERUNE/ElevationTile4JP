@@ -2,7 +2,7 @@
 ![](icon.png)
 
 ## Overview
-This is a QGIS plugin that downloads elevation tiles and converts them to GeoTiff.
+This is a QGIS plugin that downloads Japan elevation tiles and converts them to GeoTiff.
 <br>
 ![](./img/mov.gif)
 
