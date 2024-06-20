@@ -29,7 +29,7 @@ This is a QGIS plugin that downloads elevation tiles and converts them to GeoTif
 
 ## Note
 - This plugin is ready-to-use but the data source will be decimated during the process. If you need accurate data, use [QuickDEM4JP](https://github.com/MIERUNE/QuickDEM4JP).
-- Downloadable tiles amount is limited to 1000.
+- Downloadable amount is limited to 1000 tiles. A lower zoom level has to be considered if the limited tiles amount is reached.
 - The original tile coordinate reference system is web mercator (EPSG:3857) and exported file will be reprojected to the input value.
 
 ---
