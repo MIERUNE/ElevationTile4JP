@@ -4,7 +4,7 @@ import os
 from qgis.PyQt import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QDialog, QMessageBox
+from PyQt5.QtWidgets import QDialog
 
 
 class ProgressDialog(QDialog):
@@ -16,7 +16,6 @@ class ProgressDialog(QDialog):
         """
         super().__init__()
         self.setWindowFlag(Qt.WindowCloseButtonHint, False)
-        self.setWindowFlag(Qt.WindowStaysOnTopHint)
         self.ui = uic.loadUi(
             os.path.join(os.path.dirname(__file__), "progress_dialog.ui"), self
         )
