@@ -8,11 +8,18 @@ This is a QGIS plugin that downloads elevation tiles and converts them to GeoTif
 
 
 ## Usage
-- Specify the area to get DEM with the map canvas
+
 - Click plugin icon or select Plugin --> ElevationTile4JP in menu bar
-- Select the zoom level of the tiles
-- Set the name of the output file
-- Select the outpu file CRS
+- Select tiles zoom level
+- Set the output file
+- Select the output file CRS
+- Set the area of interest. Area of interest can be set with:
+  - Layer: target layer extent
+  - Layout Map: target layout map extent
+  - Bookmark: extent saved on bookmark
+  - Map Canvas Extent: current map canvas extent
+  - Draw on Canvas: draw customize extent on map canvas
+
 - Click OK and the processed file will be added to the map canvas
 
 ![](img/dialog.png)
@@ -22,6 +29,7 @@ This is a QGIS plugin that downloads elevation tiles and converts them to GeoTif
 
 ## Note
 - This plugin is ready-to-use but the data source will be decimated during the process. If you need accurate data, use [QuickDEM4JP](https://github.com/MIERUNE/QuickDEM4JP).
+- Downloadable tiles amount is limited to 1000.
 - The original tile coordinate reference system is web mercator (EPSG:3857) and exported file will be reprojected to the input value.
 
 ---
