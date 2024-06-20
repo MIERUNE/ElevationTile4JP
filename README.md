@@ -22,7 +22,7 @@ This is a QGIS plugin that downloads elevation tiles and converts them to GeoTif
 
 - Click OK and the processed file will be added to the map canvas
 
-![](img/dialog.png)
+<img src="img/dialog.png" alt="dialog" width="600"/>
 
 ## Data source
 [Elevation tile](https://maps.gsi.go.jp/development/ichiran.html#dem) of [Geospatial Information Authority of Japan](https://www.gsi.go.jp/)
