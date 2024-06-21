@@ -4,7 +4,7 @@
     <name>Dialog</name>
     <message encoding="UTF-8">
         <location filename="../progress_dialog.ui" line="20"/>
-        <source>Processing...</source>
+        <source>処理中...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -14,12 +14,12 @@
     </message>
     <message encoding="UTF-8">
         <location filename="../progress_dialog.ui" line="51"/>
-        <source>Something</source>
+        <source>テキスト</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
         <location filename="../progress_dialog.ui" line="69"/>
-        <source>Cancel</source>
+        <source>中断</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -32,17 +32,17 @@
     </message>
     <message encoding="UTF-8">
         <location filename="../elevation_tile_for_jp_dialog_base.ui" line="42"/>
-        <source>Elevation tile zoom level</source>
+        <source>標高タイルズームレベル</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
         <location filename="../elevation_tile_for_jp_dialog_base.ui" line="73"/>
-        <source>Output file path</source>
+        <source>出力ファイル</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
         <location filename="../elevation_tile_for_jp_dialog_base.ui" line="113"/>
-        <source>Output file CRS</source>
+        <source>出力ファイルCRS</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
