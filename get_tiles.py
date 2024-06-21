@@ -24,7 +24,7 @@ import os
 from math import log
 
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, QCoreApplication
 from qgis.core import (
     QgsProject,
     QgsRasterLayer,
@@ -41,7 +41,6 @@ from progress_dialog import ProgressDialog
 
 
 class GetTilesWithinMapCanvas:
-
     # ダイアログの初期表示等の処理はここに記載する
     def __init__(self, iface):
         self.iface = iface
@@ -57,7 +56,7 @@ class GetTilesWithinMapCanvas:
         self.dlg.mQgsFileWidget_output.setStorageMode(
             QgsFileWidget.StorageMode.SaveFile
         )
-        self.dlg.mQgsFileWidget_output.setDialogTitle("保存ファイルを選択してください")
+        self.dlg.mQgsFileWidget_output.setDialogTitle(self.tr("Select output file"))
         # プロジェクトのデフォルトのcrsを格納
         self.dlg.mQgsProjectionSelectionWidget_output_crs.setCrs(self.project.crs())
 
@@ -78,9 +77,13 @@ class GetTilesWithinMapCanvas:
 
         self.process_interrupted = False
 
+    def tr(self, message):
+        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
+        return QCoreApplication.translate("ElevationTileForJP", message)
+
     # update extent crs when updated
     def on_map_crs_changed(self):
-        self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs()),
+        (self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs()),)
         self.dlg.mExtentGroupBox.setOutputExtentFromCurrent()
 
     # キャンセルクリック
@@ -96,8 +99,8 @@ class GetTilesWithinMapCanvas:
     ) -> None:
         if QMessageBox.Yes == QMessageBox.question(
             None,
-            "確認",
-            "処理を中断し、以降の処理をスキップしてよろしいですか？",
+            self.tr("Aborting"),
+            self.tr("Are you sure to cancel process?"),
             QMessageBox.Yes,
             QMessageBox.No,
         ):
@@ -107,10 +110,10 @@ class GetTilesWithinMapCanvas:
     def handle_process_failed(
         self, error_message, thread: QThread, progress_dialog: ProgressDialog
     ) -> None:
-        progress_dialog.close(),
-        QMessageBox.information(None, "エラー", error_message),
-        self.set_interrupted(),
-        self.abort_process(thread, progress_dialog),
+        (progress_dialog.close(),)
+        (QMessageBox.information(None, self.tr("Error"), error_message),)
+        (self.set_interrupted(),)
+        (self.abort_process(thread, progress_dialog),)
 
     def abort_process(self, thread: QThread, progress_dialog: ProgressDialog) -> None:
         if self.process_interrupted:
@@ -130,7 +133,9 @@ class GetTilesWithinMapCanvas:
         # 入力値のバリデーション
         if geotiff_output_path == "":
             QMessageBox.information(
-                None, "エラー", "出力ファイル名を指定してください。"
+                None,
+                self.tr("Error"),
+                self.tr("Output file is not defined."),
             )
             return
 
@@ -138,7 +143,9 @@ class GetTilesWithinMapCanvas:
         directory = os.path.dirname(geotiff_output_path)
         if not os.path.isdir(directory):
             QMessageBox.information(
-                None, "エラー", f"出力フォルダー先が存在していません。\n{directory}"
+                None,
+                self.tr("Error"),
+                self.tr("Cannot find output folder.\n{}".format(directory)),
             )
             return
 
@@ -150,8 +157,8 @@ class GetTilesWithinMapCanvas:
         if not output_crs_isvalid:
             QMessageBox.information(
                 None,
-                "エラー",
-                "出力ファイルの座標系が指定されていません。座標系を指定してください。",
+                self.tr("Error"),
+                self.tr("CRS of output file is not defined."),
             )
             return
 
@@ -160,8 +167,10 @@ class GetTilesWithinMapCanvas:
         if xmin > xmax:
             QMessageBox.information(
                 None,
-                "エラー",
-                "タイル取得範囲が不正です。マップキャンバスには標準時子午線を跨がない範囲を表示してください。",
+                self.tr("Error"),
+                self.tr(
+                    "Target extent must not cross the International Date Line meridian."
+                ),
             )
             return
 
@@ -175,21 +184,26 @@ class GetTilesWithinMapCanvas:
 
         # check number of tiles
         if thread.number_of_tiles > thread.max_number_of_tiles:
-            error_message = (
-                f"取得タイル数({thread.number_of_tiles}枚)が多すぎます。\n"
-                f"上限の{thread.max_number_of_tiles}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。"
+            error_message = self.tr(
+                "Too large amount of tiles ({})\n".format(thread.number_of_tiles)
             )
-            QMessageBox.information(None, "エラー", error_message)
+            error_message += self.tr(
+                "Set a lower zoom level or extent to get less than {} tiles.".format(
+                    thread.max_number_of_tiles
+                )
+            )
+            QMessageBox.information(None, self.tr("Error"), error_message)
             return
 
         elif thread.number_of_tiles > thread.large_number_of_tiles:
-            message = (
-                f"取得タイル数({thread.number_of_tiles}枚)が多いため、処理に時間がかかる可能性があります。"
-                "ダウンロードを実行しますか？"
+            message = self.tr(
+                "Dowloading {} tiles may take a while. Process anyway?".format(
+                    thread.number_of_tiles
+                )
             )
             if QMessageBox.No == QMessageBox.question(
                 None,
-                "確認",
+                self.tr("Warning"),
                 message,
                 QMessageBox.Yes,
                 QMessageBox.No,
@@ -237,7 +251,7 @@ class GetTilesWithinMapCanvas:
         )
 
         self.iface.messageBar().pushInfo(
-            "ElevationTile4JP", "GeoTiff形式のDEMを出力しました。"
+            "ElevationTile4JP", self.tr("DEM exported to Geotiff Format.")
         )
 
         self.dlg_cancel()

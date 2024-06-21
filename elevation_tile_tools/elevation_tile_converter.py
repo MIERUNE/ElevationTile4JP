@@ -108,7 +108,7 @@ class ElevationTileConverter(QThread):
     def run(self):
         try:
             self.setMaximum.emit(self.number_of_tiles)
-            self.postMessage.emit("集計中")
+            self.postMessage.emit(self.tr("Processing..."))
             self.setAbortable.emit(True)
 
             # get elevation tile arrays
@@ -131,7 +131,7 @@ class ElevationTileConverter(QThread):
         except Exception as e:
             self.processFailed.emit(e)
 
-        self.postMessage.emit("終了処理中")
+        self.postMessage.emit(self.tr("Finalizing..."))
         self.processFinished.emit()
 
     def create_geotiff(self):

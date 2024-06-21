@@ -24,11 +24,11 @@ class ProgressDialog(QDialog):
         self.init_ui()
 
     def init_ui(self):
-        self.label.setText("処理開始中...")
+        self.label.setText(self.tr("Initializing process..."))
         self.progressBar.setValue(0)
         self.progressBar.setMaximum(0)
         self.abortButton.setEnabled(True)
-        self.abortButton.setText("中断")
+        self.abortButton.setText(self.tr("Cancel"))
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Escape:
@@ -39,7 +39,7 @@ class ProgressDialog(QDialog):
         if self.abortButton.isEnabled():  # abort if possible
             self.set_abort_flag_callback()
             self.abortButton.setEnabled(False)
-            self.abortButton.setText("中断待機中...")
+            self.abortButton.setText(self.tr("Cancelling..."))
             self.close()
 
     def set_maximum(self, value: int):
