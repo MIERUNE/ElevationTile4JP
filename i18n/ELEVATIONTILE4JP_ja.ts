@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="ja_JP" sourcelanguage="en">
+<!DOCTYPE TS><TS version="2.0" language="ja_JP" sourcelanguage="en">
 <context>
     <name>Dialog</name>
     <message>
@@ -29,12 +28,12 @@
     <message>
         <location filename="../elevation_tile_tools/elevation_tile_converter.py" line="113"/>
         <source>Processing...</source>
-        <translation type="unfinished">集計中</translation>
+        <translation type="obsolete">集計中</translation>
     </message>
     <message>
         <location filename="../elevation_tile_tools/elevation_tile_converter.py" line="136"/>
         <source>Finalizing...</source>
-        <translation type="unfinished">終了処理中</translation>
+        <translation type="obsolete">終了処理中</translation>
     </message>
 </context>
 <context>

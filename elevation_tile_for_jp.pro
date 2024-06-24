@@ -1,7 +1,5 @@
 SOURCES += elevation_tile_for_jp_dialog.py \
             progress_dialog.py \
-            get_tiles.py \
-            elevation_tile_tools/elevation_tile_converter.py
 
 FORMS += elevation_tile_for_jp_dialog_base.ui \
             progress_dialog.ui

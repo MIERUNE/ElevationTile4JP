@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="en" sourcelanguage="en">
+<!DOCTYPE TS>
+<TS version="2.1" language="en" sourcelanguage="en">
 <context>
     <name>Dialog</name>
     <message>
@@ -28,12 +29,12 @@
     <message>
         <location filename="../elevation_tile_tools/elevation_tile_converter.py" line="113"/>
         <source>Processing...</source>
-        <translation type="unfinished">Processing...</translation>
+        <translation type="obsolete">Processing...</translation>
     </message>
     <message>
         <location filename="../elevation_tile_tools/elevation_tile_converter.py" line="136"/>
         <source>Finalizing...</source>
-        <translation type="unfinished">Finalizing...</translation>
+        <translation type="obsolete">Finalizing...</translation>
     </message>
 </context>
 <context>
@@ -173,7 +174,7 @@
     <message>
         <location filename="../progress_dialog.py" line="76"/>
         <source>Cannot find output folder.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cannot find output folder.</translation>
     </message>
     <message>
         <location filename="../progress_dialog.py" line="78"/>
@@ -189,7 +190,7 @@
         <location filename="../progress_dialog.py" line="87"/>
         <source>Too large amount of tiles ({})
 </source>
-        <translation type="unfinished">Too large amount of tiles ({})\n</translation>
+        <translation type="unfinished">Too large amount of tiles ({})</translation>
     </message>
     <message>
         <location filename="../progress_dialog.py" line="89"/>
@@ -214,12 +215,12 @@
     <message>
         <location filename="../progress_dialog.py" line="64"/>
         <source>Processing...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Processing...</translation>
     </message>
     <message>
         <location filename="../progress_dialog.py" line="66"/>
         <source>Finalizing...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Finalizing...</translation>
     </message>
 </context>
 </TS>
