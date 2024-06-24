@@ -11,6 +11,8 @@ from .elevation_array import ElevationArray
 from .geotiff import GeoTiff
 from .tile_coordinate import TileCoordinate
 
+from progress_dialog import ProgressDialog
+
 
 class ElevationTileConverter(QThread):
     # thread signals to progress dialog

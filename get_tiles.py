@@ -56,7 +56,7 @@ class GetTilesWithinMapCanvas:
         self.dlg.mQgsFileWidget_output.setStorageMode(
             QgsFileWidget.StorageMode.SaveFile
         )
-        self.dlg.mQgsFileWidget_output.setDialogTitle(self.tr("Select output file"))
+
         # プロジェクトのデフォルトのcrsを格納
         self.dlg.mQgsProjectionSelectionWidget_output_crs.setCrs(self.project.crs())
 
@@ -99,8 +99,8 @@ class GetTilesWithinMapCanvas:
     ) -> None:
         if QMessageBox.Yes == QMessageBox.question(
             None,
-            self.tr("Aborting"),
-            self.tr("Are you sure to cancel process?"),
+            progress_dialog.translate("Aborting"),
+            progress_dialog.translate("Are you sure to cancel process?"),
             QMessageBox.Yes,
             QMessageBox.No,
         ):
@@ -111,7 +111,11 @@ class GetTilesWithinMapCanvas:
         self, error_message, thread: QThread, progress_dialog: ProgressDialog
     ) -> None:
         (progress_dialog.close(),)
-        (QMessageBox.information(None, self.tr("Error"), error_message),)
+        (
+            QMessageBox.information(
+                None, progress_dialog.translate("Error"), error_message
+            ),
+        )
         (self.set_interrupted(),)
         (self.abort_process(thread, progress_dialog),)
 
@@ -130,12 +134,23 @@ class GetTilesWithinMapCanvas:
         zoom_level = int(self.dlg.comboBox_zoomlevel.currentText())
         bbox = self.transform(project_crs, self.get_canvas_bbox())
 
+        # elevation tiles converter process thread
+        thread = ElevationTileConverter(
+            output_path=geotiff_output_path,
+            output_crs_id=output_crs.authid(),
+            zoom_level=zoom_level,
+            bbox=bbox,
+        )
+
+        # initialize process dialog
+        progress_dialog = ProgressDialog(thread.set_abort_flag)
+
         # 入力値のバリデーション
         if geotiff_output_path == "":
             QMessageBox.information(
                 None,
-                self.tr("Error"),
-                self.tr("Output file is not defined."),
+                progress_dialog.translate("Error"),
+                progress_dialog.translate("Output file is not defined."),
             )
             return
 
@@ -144,8 +159,10 @@ class GetTilesWithinMapCanvas:
         if not os.path.isdir(directory):
             QMessageBox.information(
                 None,
-                self.tr("Error"),
-                self.tr("Cannot find output folder.\n{}".format(directory)),
+                progress_dialog.translate("Error"),
+                "{}\n{}".format(
+                    progress_dialog.translate("Cannot find output folder."), directory
+                ),
             )
             return
 
@@ -157,8 +174,8 @@ class GetTilesWithinMapCanvas:
         if not output_crs_isvalid:
             QMessageBox.information(
                 None,
-                self.tr("Error"),
-                self.tr("CRS of output file is not defined."),
+                progress_dialog.translate("Error"),
+                progress_dialog.translate("CRS of output file is not defined."),
             )
             return
 
@@ -167,51 +184,46 @@ class GetTilesWithinMapCanvas:
         if xmin > xmax:
             QMessageBox.information(
                 None,
-                self.tr("Error"),
-                self.tr(
+                progress_dialog.translate("Error"),
+                progress_dialog.translate(
                     "Target extent must not cross the International Date Line meridian."
                 ),
             )
             return
 
-        # elevation tiles converter process thread
-        thread = ElevationTileConverter(
-            output_path=geotiff_output_path,
-            output_crs_id=output_crs.authid(),
-            zoom_level=zoom_level,
-            bbox=bbox,
-        )
-
         # check number of tiles
         if thread.number_of_tiles > thread.max_number_of_tiles:
-            error_message = self.tr(
-                "Too large amount of tiles ({})\n".format(thread.number_of_tiles)
+            error_message = progress_dialog.translate(
+                "Too large amount of tiles ({})\n"
             )
-            error_message += self.tr(
-                "Set a lower zoom level or extent to get less than {} tiles.".format(
-                    thread.max_number_of_tiles
-                )
+            # error_message += f" ({thread.number_of_tiles})\n"
+            error_message += progress_dialog.translate(
+                "Set a lower zoom level or extent to get less than {} tiles."
             )
-            QMessageBox.information(None, self.tr("Error"), error_message)
+
+            error_message = error_message.format(
+                thread.number_of_tiles, thread.max_number_of_tiles
+            )
+
+            QMessageBox.information(
+                None, progress_dialog.translate("Error"), error_message
+            )
             return
 
         elif thread.number_of_tiles > thread.large_number_of_tiles:
-            message = self.tr(
-                "Dowloading {} tiles may take a while. Process anyway?".format(
-                    thread.number_of_tiles
-                )
-            )
+            message = progress_dialog.translate(
+                "Dowloading {} tiles may take a while. Process anyway?"
+            ).format(thread.number_of_tiles)
+
             if QMessageBox.No == QMessageBox.question(
                 None,
-                self.tr("Warning"),
+                progress_dialog.translate("Warning"),
                 message,
                 QMessageBox.Yes,
                 QMessageBox.No,
             ):
                 return
 
-        # initialize process dialof
-        progress_dialog = ProgressDialog(thread.set_abort_flag)
         progress_dialog.set_abortable(False)
         progress_dialog.abortButton.clicked.connect(
             lambda: [
@@ -251,9 +263,15 @@ class GetTilesWithinMapCanvas:
         )
 
         self.iface.messageBar().pushInfo(
-            "ElevationTile4JP", self.tr("DEM exported to Geotiff Format.")
+            "ElevationTile4JP",
+            progress_dialog.translate("DEM exported to Geotiff Format."),
         )
-
+        # message = progress_dialog.translate("This is a test message")
+        # QMessageBox.information(
+        #     None,
+        #     "info",
+        #     message,
+        # )
         self.dlg_cancel()
 
     def get_current_zoom(self):
