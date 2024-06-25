@@ -110,14 +110,10 @@ class GetTilesWithinMapCanvas:
     def handle_process_failed(
         self, error_message, thread: QThread, progress_dialog: ProgressDialog
     ) -> None:
-        (progress_dialog.close(),)
-        (
-            QMessageBox.information(
-                None, progress_dialog.translate("Error"), error_message
-            ),
-        )
-        (self.set_interrupted(),)
-        (self.abort_process(thread, progress_dialog),)
+        progress_dialog.close()
+        QMessageBox.information(None, progress_dialog.translate("Error"), error_message)
+        self.set_interrupted()
+        self.abort_process(thread, progress_dialog)
 
     def abort_process(self, thread: QThread, progress_dialog: ProgressDialog) -> None:
         if self.process_interrupted:
