@@ -190,7 +190,7 @@
         <location filename="../progress_dialog.py" line="87"/>
         <source>Too large amount of tiles ({})
 </source>
-        <translation type="unfinished">Too large amount of tiles ({})</translation>
+        <translation type="obsolete">Too large amount of tiles ({})</translation>
     </message>
     <message>
         <location filename="../progress_dialog.py" line="89"/>
@@ -221,6 +221,11 @@
         <location filename="../progress_dialog.py" line="66"/>
         <source>Finalizing...</source>
         <translation type="unfinished">Finalizing...</translation>
+    </message>
+    <message>
+        <location filename="../progress_dialog.py" line="87"/>
+        <source>Too large amount of tiles ({})</source>
+        <translation type="unfinished">Too large amount of tiles ({})</translation>
     </message>
 </context>
 </TS>

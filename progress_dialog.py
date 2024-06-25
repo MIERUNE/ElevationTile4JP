@@ -83,8 +83,8 @@ class ProgressDialog(QDialog):
             translated_message = self.tr(
                 "Target extent must not cross the International Date Line meridian."
             )
-        elif message == "Too large amount of tiles ({})\n":
-            translated_message = self.tr("Too large amount of tiles ({})\n")
+        elif message == "Too large amount of tiles ({})":
+            translated_message = self.tr("Too large amount of tiles ({})")
         elif message == "Set a lower zoom level or extent to get less than {} tiles.":
             translated_message = self.tr(
                 "Set a lower zoom level or extent to get less than {} tiles."

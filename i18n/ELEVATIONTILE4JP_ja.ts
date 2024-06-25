@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="ja_JP" sourcelanguage="en">
+<!DOCTYPE TS>
+<TS version="2.1" language="ja_JP" sourcelanguage="en">
 <context>
     <name>Dialog</name>
     <message>
@@ -108,8 +109,7 @@
     </message>
     <message>
         <location filename="../get_tiles.py" line="187"/>
-        <source>Too large amount of tiles ({})
-</source>
+        <source>Too large amount of tiles ({}) \n</source>
         <translation type="obsolete">取得タイル数({}枚)が多すぎます。\n</translation>
     </message>
     <message>
@@ -194,7 +194,7 @@
         <location filename="../progress_dialog.py" line="87"/>
         <source>Too large amount of tiles ({})
 </source>
-        <translation type="unfinished">取得タイル数({}枚)が多すぎます。</translation>
+        <translation type="obsolete">取得タイル数({}枚)が多すぎます。</translation>
     </message>
     <message>
         <location filename="../progress_dialog.py" line="89"/>
@@ -225,6 +225,11 @@
         <location filename="../progress_dialog.py" line="66"/>
         <source>Finalizing...</source>
         <translation type="unfinished">終了処理中</translation>
+    </message>
+    <message>
+        <location filename="../progress_dialog.py" line="87"/>
+        <source>Too large amount of tiles ({})</source>
+        <translation type="unfinished">取得タイル数({}枚)が多すぎます。</translation>
     </message>
 </context>
 </TS>

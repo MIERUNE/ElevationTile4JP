@@ -193,10 +193,10 @@ class GetTilesWithinMapCanvas:
 
         # check number of tiles
         if thread.number_of_tiles > thread.max_number_of_tiles:
-            error_message = progress_dialog.translate(
-                "Too large amount of tiles ({})\n"
+            error_message = (
+                progress_dialog.translate("Too large amount of tiles ({})") + " \n"
             )
-            # error_message += f" ({thread.number_of_tiles})\n"
+
             error_message += progress_dialog.translate(
                 "Set a lower zoom level or extent to get less than {} tiles."
             )
@@ -266,12 +266,7 @@ class GetTilesWithinMapCanvas:
             "ElevationTile4JP",
             progress_dialog.translate("DEM exported to Geotiff Format."),
         )
-        # message = progress_dialog.translate("This is a test message")
-        # QMessageBox.information(
-        #     None,
-        #     "info",
-        #     message,
-        # )
+
         self.dlg_cancel()
 
     def get_current_zoom(self):
