@@ -24,7 +24,7 @@ import os
 from math import log
 
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import QThread, QCoreApplication
+from PyQt5.QtCore import QThread
 from qgis.core import (
     QgsProject,
     QgsRasterLayer,
