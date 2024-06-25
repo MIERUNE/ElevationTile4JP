@@ -77,10 +77,6 @@ class GetTilesWithinMapCanvas:
 
         self.process_interrupted = False
 
-    def tr(self, message):
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate("ElevationTileForJP", message)
-
     # update extent crs when updated
     def on_map_crs_changed(self):
         (self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs()),)
