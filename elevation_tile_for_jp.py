@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from PyQt5.QtCore import QSettings, QTranslator, QCoreApplication
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 
@@ -31,7 +31,6 @@ from get_tiles import GetTilesWithinMapCanvas
 
 
 class ElevationTileForJP:
-
     def __init__(self, iface):
         # Save reference to the QGIS interface
         self.iface = iface
@@ -39,14 +38,13 @@ class ElevationTileForJP:
         self.plugin_dir = os.path.dirname(__file__)
 
         # initialize locale
-        if QSettings().value('locale/userLocale') is not None:
-            locale = QSettings().value('locale/userLocale')[0:2]
+        if QSettings().value("locale/userLocale") is not None:
+            locale = QSettings().value("locale/userLocale")[0:2]
         else:
-            locale = 'en'
+            locale = "en"
         locale_path = os.path.join(
-            self.plugin_dir,
-            'i18n',
-            'ElevationTile4JP{}.qm'.format(locale))
+            self.plugin_dir, "i18n", "ELEVATIONTILE4JP_{}.qm".format(locale)
+        )
 
         if os.path.exists(locale_path):
             self.translator = QTranslator()
@@ -55,7 +53,7 @@ class ElevationTileForJP:
 
         # Declare instance attributes
         self.actions = []
-        self.menu = self.tr(u'&ElevationTile4JP')
+        self.menu = self.tr("&ElevationTile4JP")
 
         # Check if plugin was started the first time in current QGIS session
         # Must be set in initGui() to survive plugin reloads
@@ -64,7 +62,7 @@ class ElevationTileForJP:
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('ElevationTileForJP', message)
+        return QCoreApplication.translate("ElevationTileForJP", message)
 
     def add_action(
         self,
@@ -76,9 +74,8 @@ class ElevationTileForJP:
         add_to_toolbar=True,
         status_tip=None,
         whats_this=None,
-        parent=None
+        parent=None,
     ):
-
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
@@ -95,30 +92,27 @@ class ElevationTileForJP:
             self.iface.addToolBarIcon(action)
 
         if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
+            self.iface.addPluginToMenu(self.menu, action)
 
         self.actions.append(action)
 
         return action
 
     def initGui(self):
-        icon_path = self.plugin_dir + '/icon.png'
+        icon_path = self.plugin_dir + "/icon.png"
         self.add_action(
             icon_path,
-            text=self.tr(u'ElevationTile4JP'),
+            text=self.tr("ElevationTile4JP"),
             callback=self.dialog_show,
-            parent=self.iface.mainWindow())
+            parent=self.iface.mainWindow(),
+        )
 
         # will be set False in run()
         self.first_start = True
 
     def unload(self):
         for action in self.actions:
-            self.iface.removePluginMenu(
-                self.tr(u'&ElevationTile4JP'),
-                action)
+            self.iface.removePluginMenu(self.tr("&ElevationTile4JP"), action)
             self.iface.removeToolBarIcon(action)
 
     def dialog_show(self):

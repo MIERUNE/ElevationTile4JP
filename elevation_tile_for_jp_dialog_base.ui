@@ -39,7 +39,7 @@
         <cursorShape>ArrowCursor</cursorShape>
        </property>
        <property name="text">
-        <string>標高タイルズームレベル</string>
+        <string>Elevation tile zoom level</string>
        </property>
       </widget>
      </item>
@@ -70,7 +70,7 @@
         </font>
        </property>
        <property name="text">
-        <string>出力ファイル</string>
+        <string>Output file path</string>
        </property>
       </widget>
      </item>
@@ -110,7 +110,7 @@
         </font>
        </property>
        <property name="text">
-        <string>出力ファイルCRS</string>
+        <string>Output file CRS</string>
        </property>
       </widget>
      </item>

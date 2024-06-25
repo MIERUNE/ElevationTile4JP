@@ -41,7 +41,6 @@ from progress_dialog import ProgressDialog
 
 
 class GetTilesWithinMapCanvas:
-
     # ダイアログの初期表示等の処理はここに記載する
     def __init__(self, iface):
         self.iface = iface
@@ -57,7 +56,7 @@ class GetTilesWithinMapCanvas:
         self.dlg.mQgsFileWidget_output.setStorageMode(
             QgsFileWidget.StorageMode.SaveFile
         )
-        self.dlg.mQgsFileWidget_output.setDialogTitle("保存ファイルを選択してください")
+
         # プロジェクトのデフォルトのcrsを格納
         self.dlg.mQgsProjectionSelectionWidget_output_crs.setCrs(self.project.crs())
 
@@ -80,7 +79,7 @@ class GetTilesWithinMapCanvas:
 
     # update extent crs when updated
     def on_map_crs_changed(self):
-        self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs()),
+        (self.dlg.mExtentGroupBox.setOutputCrs(QgsProject.instance().crs()),)
         self.dlg.mExtentGroupBox.setOutputExtentFromCurrent()
 
     # キャンセルクリック
@@ -96,8 +95,8 @@ class GetTilesWithinMapCanvas:
     ) -> None:
         if QMessageBox.Yes == QMessageBox.question(
             None,
-            "確認",
-            "処理を中断し、以降の処理をスキップしてよろしいですか？",
+            progress_dialog.translate("Aborting"),
+            progress_dialog.translate("Are you sure to cancel process?"),
             QMessageBox.Yes,
             QMessageBox.No,
         ):
@@ -107,10 +106,10 @@ class GetTilesWithinMapCanvas:
     def handle_process_failed(
         self, error_message, thread: QThread, progress_dialog: ProgressDialog
     ) -> None:
-        progress_dialog.close(),
-        QMessageBox.information(None, "エラー", error_message),
-        self.set_interrupted(),
-        self.abort_process(thread, progress_dialog),
+        progress_dialog.close()
+        QMessageBox.information(None, progress_dialog.translate("Error"), error_message)
+        self.set_interrupted()
+        self.abort_process(thread, progress_dialog)
 
     def abort_process(self, thread: QThread, progress_dialog: ProgressDialog) -> None:
         if self.process_interrupted:
@@ -127,10 +126,23 @@ class GetTilesWithinMapCanvas:
         zoom_level = int(self.dlg.comboBox_zoomlevel.currentText())
         bbox = self.transform(project_crs, self.get_canvas_bbox())
 
+        # elevation tiles converter process thread
+        thread = ElevationTileConverter(
+            output_path=geotiff_output_path,
+            output_crs_id=output_crs.authid(),
+            zoom_level=zoom_level,
+            bbox=bbox,
+        )
+
+        # initialize process dialog
+        progress_dialog = ProgressDialog(thread.set_abort_flag)
+
         # 入力値のバリデーション
         if geotiff_output_path == "":
             QMessageBox.information(
-                None, "エラー", "出力ファイル名を指定してください。"
+                None,
+                progress_dialog.translate("Error"),
+                progress_dialog.translate("Output file is not defined."),
             )
             return
 
@@ -138,7 +150,11 @@ class GetTilesWithinMapCanvas:
         directory = os.path.dirname(geotiff_output_path)
         if not os.path.isdir(directory):
             QMessageBox.information(
-                None, "エラー", f"出力フォルダー先が存在していません。\n{directory}"
+                None,
+                progress_dialog.translate("Error"),
+                "{}\n{}".format(
+                    progress_dialog.translate("Cannot find output folder."), directory
+                ),
             )
             return
 
@@ -150,8 +166,8 @@ class GetTilesWithinMapCanvas:
         if not output_crs_isvalid:
             QMessageBox.information(
                 None,
-                "エラー",
-                "出力ファイルの座標系が指定されていません。座標系を指定してください。",
+                progress_dialog.translate("Error"),
+                progress_dialog.translate("CRS of output file is not defined."),
             )
             return
 
@@ -160,44 +176,46 @@ class GetTilesWithinMapCanvas:
         if xmin > xmax:
             QMessageBox.information(
                 None,
-                "エラー",
-                "タイル取得範囲が不正です。マップキャンバスには標準時子午線を跨がない範囲を表示してください。",
+                progress_dialog.translate("Error"),
+                progress_dialog.translate(
+                    "Target extent must not cross the International Date Line meridian."
+                ),
             )
             return
-
-        # elevation tiles converter process thread
-        thread = ElevationTileConverter(
-            output_path=geotiff_output_path,
-            output_crs_id=output_crs.authid(),
-            zoom_level=zoom_level,
-            bbox=bbox,
-        )
 
         # check number of tiles
         if thread.number_of_tiles > thread.max_number_of_tiles:
             error_message = (
-                f"取得タイル数({thread.number_of_tiles}枚)が多すぎます。\n"
-                f"上限の{thread.max_number_of_tiles}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。"
+                progress_dialog.translate("Too large amount of tiles ({})") + " \n"
             )
-            QMessageBox.information(None, "エラー", error_message)
+
+            error_message += progress_dialog.translate(
+                "Set a lower zoom level or extent to get less than {} tiles."
+            )
+
+            error_message = error_message.format(
+                thread.number_of_tiles, thread.max_number_of_tiles
+            )
+
+            QMessageBox.information(
+                None, progress_dialog.translate("Error"), error_message
+            )
             return
 
         elif thread.number_of_tiles > thread.large_number_of_tiles:
-            message = (
-                f"取得タイル数({thread.number_of_tiles}枚)が多いため、処理に時間がかかる可能性があります。"
-                "ダウンロードを実行しますか？"
-            )
+            message = progress_dialog.translate(
+                "Dowloading {} tiles may take a while. Process anyway?"
+            ).format(thread.number_of_tiles)
+
             if QMessageBox.No == QMessageBox.question(
                 None,
-                "確認",
+                progress_dialog.translate("Warning"),
                 message,
                 QMessageBox.Yes,
                 QMessageBox.No,
             ):
                 return
 
-        # initialize process dialof
-        progress_dialog = ProgressDialog(thread.set_abort_flag)
         progress_dialog.set_abortable(False)
         progress_dialog.abortButton.clicked.connect(
             lambda: [
@@ -237,7 +255,8 @@ class GetTilesWithinMapCanvas:
         )
 
         self.iface.messageBar().pushInfo(
-            "ElevationTile4JP", "GeoTiff形式のDEMを出力しました。"
+            "ElevationTile4JP",
+            progress_dialog.translate("DEM exported to Geotiff Format."),
         )
 
         self.dlg_cancel()

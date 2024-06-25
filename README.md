@@ -9,18 +9,18 @@ This is a QGIS plugin that downloads Japan elevation tiles and converts them to 
 
 ## Usage
 
-- 1. Click plugin icon or select Plugin --> ElevationTile4JP in menu bar
-- 2. Select tiles zoom level
-- 3. Set the output file
-- 4. Select the output file CRS
-- 5. Set the area of interest. Area of interest can be set with:
+- 1 Click plugin icon or select Plugin --> ElevationTile4JP in menu bar
+- 2 Select tiles zoom level
+- 3 Set the output file
+- 4 Select the output file CRS
+- 5 Set the area of interest. Area of interest can be set with:
   - Layer: target layer extent
   - Layout Map: target layout map extent
   - Bookmark: extent saved on bookmark
   - Map Canvas Extent: current map canvas extent
   - Draw on Canvas: draw customize extent on map canvas
 
-- 6. Click OK and the processed file will be added to the map canvas
+- 6 Click OK and the processed file will be added to the map canvas
 
 <img src="img/dialog.png" alt="dialog screenshot" width="600"/>
 
