@@ -1,10 +1,11 @@
 from qgis.core import QgsApplication
-from processing_provider.elevation_tile_provider import ElevationTileForJpProcessingProvider
+from qgis._gui import QgisInterface
+from .processing_provider.elevation_tile_provider import ElevationTileForJpProcessingProvider
 
-class YourPluginName():
+class ElevationTile4JpPlugin:
 
-    def __init__(self):
-        self.provider = None
+    def __init__(self, iface: QgisInterface):
+        self.iface = iface
 
     def initProcessing(self):
         self.provider = ElevationTileForJpProcessingProvider()

@@ -1,20 +1,23 @@
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
+    QgsProject,
     QgsProcessingAlgorithm,
     QgsProcessingParameterEnum,
-    QgsProcessingParameterFileDestination,
+    QgsProcessingParameterRasterDestination,
     QgsProcessingParameterCrs,
-    QgsProcessingParameterExtent
+    QgsProcessingParameterExtent,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
 )
 from ..elevation_tile_tools.elevation_tile_converter import ElevationTileConverter
 
 
 class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
 
-    BBOX = 'BBOX'
+    EXTENT = 'EXTENT'
     ZOOM_LEVEL = 'ZOOM_LEVEL'
-    OUTPUT_CRS = 'OUTPUT_CRS'
-    OUTPUT_FOLDER = 'OUTPUT_FOLDER'
+    OUTPUT_PATH = 'OUTPUT_PATH'
+    OUTPUT_CRS_ID = 'OUTPUT_CRS_ID'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
@@ -28,74 +31,85 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
     def displayName(self):
         return self.tr('ElevationTile4JP DEM Downloader')
 
-    def group(self):
-        return self.tr('Elevation Tools')
-
-    def groupId(self):
-        return 'elevation_tools'
-
     def shortHelpString(self):
         return self.tr('国土地理院の標高タイルを取得しGeoTIFFに変換するプロセッシングツールです。')
 
     def initAlgorithm(self, config=None):
-        # ズームレベル
-        zoom_levels = [str(i) for i in range(15)]  # 0から14までのズームレベルを生成
+        zoom_levels = [str(i) for i in range(15)]
         self.addParameter(
             QgsProcessingParameterEnum(
-            self.ZOOM_LEVEL,
-            self.tr('Elevation tile zoom level'),
-            options=zoom_levels,
-            defaultValue=9,
-            optional=True
+                self.ZOOM_LEVEL,
+                self.tr('Elevation tile zoom level'),
+                options=zoom_levels,
+                defaultValue=9,
             )
         )
-        # 出力ファイルパス
         self.addParameter(
-            QgsProcessingParameterFileDestination(
-                self.OUTPUT_FILE,
-                self.tr('Output file path'),
-                fileFilter='GeoTIFF files (*.tif)',
-                optional=True,
-                defaultValue='output.tif'
+            QgsProcessingParameterRasterDestination(
+                "OUTPUT",
+                self.tr("Output file"),
+                defaultValue="elevation_tile.tif",
             )
         )
-        # 出力ファイルCRS（座標参照系）
         self.addParameter(
             QgsProcessingParameterCrs(
-                self.OUTPUT_CRS,
+                self.OUTPUT_CRS_ID,
                 self.tr('Output file CRS'),
                 defaultValue='EPSG:4326',
-                optional=True
             )
         )
-        # 取得範囲（Extent）
         self.addParameter(
             QgsProcessingParameterExtent(
                 self.EXTENT,
                 self.tr('Extent'),
                 defaultValue='141.24,42.97,141.48,43.11',
-                optional=True
             )
         )
 
-    def processAlgorithm(self, parameters, context, feedback):
-        bbox = [float(c) for c in parameters[self.BBOX].split(',')]
-        zoom_level = int(parameters[self.ZOOM_LEVEL])
-        output_crs = parameters[self.OUTPUT_CRS]
-        output_folder = parameters[self.OUTPUT_FOLDER]
 
+    def processAlgorithm(self, parameters, context, feedback):
         feedback.pushInfo("ElevationTile4JP処理開始...")
 
-        converter = ElevationTileConverter(
-            output_path=output_folder,
-            zoom_level=zoom_level,
-            bbox=bbox,
-            output_crs_id=output_crs
-        )
+        zoom_levels = [str(i) for i in range(15)]
+        zoom_level_index = self.parameterAsEnum(parameters, self.ZOOM_LEVEL, context)
+        zoom_level = int(zoom_levels[zoom_level_index])
 
-        converter.run(feedback)
-        converter.create_geotiff()
+        output_path = self.parameterAsFileOutput(parameters, self.OUTPUT_PATH, context)
+
+        output_crs_id = self.parameterAsCrs(parameters, self.OUTPUT_CRS_ID, context).authid()
+
+        extent = self.parameterAsExtent(parameters, self.EXTENT, context)
+
+        source_crs = QgsProject.instance().crs()
+        dest_crs = QgsCoordinateReferenceSystem('EPSG:4326')
+
+        try:
+            transform = QgsCoordinateTransform(source_crs, dest_crs, QgsProject.instance())
+            transformed_extent = transform.transformBoundingBox(extent)
+        except Exception as e:
+            feedback.reportError(f"座標変換に失敗しました: {str(e)}")
+            return {}
+
+        bbox = [
+            transformed_extent.xMinimum(),
+            transformed_extent.yMinimum(),
+            transformed_extent.xMaximum(),
+            transformed_extent.yMaximum()
+        ]
+
+        try:
+            converter = ElevationTileConverter(
+                output_path=output_path,
+                zoom_level=zoom_level,
+                bbox=bbox,
+                output_crs_id=output_crs_id
+            )
+            converter.run()
+            converter.create_geotiff()
+        except Exception as e:
+            feedback.reportError(f"標高タイル作成中にエラーが発生しました: {str(e)}")
+            return {}
 
         feedback.pushInfo("GeoTIFF作成完了しました。")
 
-        return {}
+        return {self.OUTPUT_PATH: output_path}
