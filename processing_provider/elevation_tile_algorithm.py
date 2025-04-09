@@ -1,3 +1,4 @@
+import os
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProject,
@@ -46,9 +47,9 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterRasterDestination(
-                "OUTPUT",
+                self.OUTPUT_PATH,
                 self.tr("Output file"),
-                defaultValue="elevation_tile.tif",
+                optional=False
             )
         )
         self.addParameter(
@@ -62,10 +63,9 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterExtent(
                 self.EXTENT,
                 self.tr('Extent'),
-                defaultValue='141.24,42.97,141.48,43.11',
+                optional=False,
             )
         )
-
 
     def processAlgorithm(self, parameters, context, feedback):
         feedback.pushInfo("ElevationTile4JP処理開始...")
@@ -74,7 +74,12 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
         zoom_level_index = self.parameterAsEnum(parameters, self.ZOOM_LEVEL, context)
         zoom_level = int(zoom_levels[zoom_level_index])
 
-        output_path = self.parameterAsFileOutput(parameters, self.OUTPUT_PATH, context)
+        output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT_PATH, context)
+        if output_path:
+            root, ext = os.path.splitext(output_path)
+            ext = ext.lower()
+            if ext != ".tif":
+                output_path = f"{root}.tif"
 
         output_crs_id = self.parameterAsCrs(parameters, self.OUTPUT_CRS_ID, context).authid()
 
