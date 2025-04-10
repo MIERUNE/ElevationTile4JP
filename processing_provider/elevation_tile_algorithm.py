@@ -1,15 +1,17 @@
 import os
-from qgis.PyQt.QtCore import QCoreApplication
+
 from qgis.core import (
-    QgsProject,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterEnum,
-    QgsProcessingParameterRasterDestination,
-    QgsProcessingParameterCrs,
-    QgsProcessingParameterExtent,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterCrs,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterExtent,
+    QgsProcessingParameterRasterDestination,
+    QgsProject,
 )
+from qgis.PyQt.QtCore import QCoreApplication
+
 from ..elevation_tile_tools.elevation_tile_converter import ElevationTileConverter
 
 
@@ -75,11 +77,9 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
         zoom_level = int(zoom_levels[zoom_level_index])
 
         output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT_PATH, context)
-        if output_path:
-            root, ext = os.path.splitext(output_path)
-            ext = ext.lower()
-            if ext != ".tif":
-                output_path = f"{root}.tif"
+
+        if not output_path.lower().endswith('.tif'):
+            output_path = os.path.splitext(output_path)[0] + '.tif'
 
         output_crs_id = self.parameterAsCrs(parameters, self.OUTPUT_CRS_ID, context).authid()
 
