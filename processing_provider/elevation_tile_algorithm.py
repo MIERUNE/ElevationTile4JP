@@ -1,5 +1,3 @@
-import os
-
 from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
