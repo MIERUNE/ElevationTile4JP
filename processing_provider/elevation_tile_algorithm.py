@@ -78,9 +78,6 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
 
         output_path = self.parameterAsOutputLayer(parameters, self.OUTPUT_PATH, context)
 
-        if not output_path.lower().endswith('.tif'):
-            output_path = os.path.splitext(output_path)[0] + '.tif'
-
         output_crs_id = self.parameterAsCrs(parameters, self.OUTPUT_CRS_ID, context).authid()
 
         extent = self.parameterAsExtent(parameters, self.EXTENT, context)
