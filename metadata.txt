@@ -27,7 +27,7 @@ tags=python,  GeoTiff, DEM, GSI, Japan
 
 homepage=https://github.com/MIERUNE/ElevationTile4JP
 category=Plugins
-icon=icon.png
+icon=./processing_provider/icon.png
 # experimental flag
 experimental=False
 
