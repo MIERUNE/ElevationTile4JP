@@ -20,17 +20,19 @@
  *                                                                         *
  ***************************************************************************/
 """
-import sys
 import os
+import sys
 
-sys.path.append(os.path.dirname(__file__))
+from qgis._gui import QgisInterface
 
-# noinspection PyPep8Naming
-def classFactory(iface):  # pylint: disable=invalid-name
-    """Load ElevationTile4JP class from file ElevationTile4JP.
+from .plugin import ElevationTile4JpPlugin
 
-    :param iface: A QGIS interface instance.
-    :type iface: QgsInterface
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "elevation_tile_tools"))
+
+
+def classFactory(iface: QgisInterface):
     """
-    from elevation_tile_for_jp import ElevationTileForJP
-    return ElevationTileForJP(iface)
+    Entrypoint for QGIS plugin.
+    """
+
+    return ElevationTile4JpPlugin(iface)

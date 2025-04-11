@@ -18,7 +18,7 @@ repository=https://github.com/MIERUNE/ElevationTile4JP
 
 # Recommended items:
 
-hasProcessingProvider=no
+hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
 # changelog=
 
@@ -27,7 +27,7 @@ tags=python,  GeoTiff, DEM, GSI, Japan
 
 homepage=https://github.com/MIERUNE/ElevationTile4JP
 category=Plugins
-icon=icon.png
+icon=./processing_provider/icon.png
 # experimental flag
 experimental=False
 
