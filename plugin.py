@@ -14,6 +14,7 @@ from .processing_provider.elevation_tile_algorithm import (
 with contextlib.suppress(ImportError):
     from processing import execAlgorithmDialog
 
+
 class ElevationTile4JpPlugin:
 
     def __init__(self, iface: QgisInterface):
