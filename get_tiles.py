@@ -23,8 +23,6 @@
 import os
 from math import log
 
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtCore import QThread
 from qgis.core import (
     QgsProject,
     QgsRasterLayer,
@@ -32,6 +30,8 @@ from qgis.core import (
     QgsCoordinateTransform,
 )
 from qgis.gui import QgsFileWidget
+from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtCore import QThread
 
 from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 

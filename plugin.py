@@ -1,8 +1,8 @@
 import contextlib
 
-from PyQt5.QtWidgets import QAction, QToolButton
 from qgis.core import QgsApplication
 from qgis.gui import QgisInterface
+from qgis.PyQt.QtWidgets import QAction, QToolButton
 
 from .processing_provider.elevation_tile_provider import (
     ElevationTileForJpProcessingProvider,

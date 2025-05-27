@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from qgis.core import QgsProcessingProvider
-from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon
 
 from .elevation_tile_algorithm import ElevationTile4JpProcessingAlgorithm
 
