@@ -93,12 +93,12 @@ class GetTilesWithinMapCanvas:
     def on_abort_clicked(
         self, thread: QThread, progress_dialog: ProgressDialog
     ) -> None:
-        if QMessageBox.Yes == QMessageBox.question(
+        if QMessageBox.StandardButton.Yes == QMessageBox.question(
             None,
             progress_dialog.translate("Aborting"),
             progress_dialog.translate("Are you sure to cancel process?"),
-            QMessageBox.Yes,
-            QMessageBox.No,
+            QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.No,
         ):
             self.set_interrupted()
             self.abort_process(thread, progress_dialog)
@@ -207,12 +207,12 @@ class GetTilesWithinMapCanvas:
                 "Dowloading {} tiles may take a while. Process anyway?"
             ).format(thread.number_of_tiles)
 
-            if QMessageBox.No == QMessageBox.question(
+            if QMessageBox.StandardButton.No == QMessageBox.question(
                 None,
                 progress_dialog.translate("Warning"),
                 message,
-                QMessageBox.Yes,
-                QMessageBox.No,
+                QMessageBox.StandardButton.Yes,
+                QMessageBox.StandardButton.No,
             ):
                 return
 
