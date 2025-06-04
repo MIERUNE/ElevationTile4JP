@@ -5,7 +5,7 @@ import numpy as np
 
 import pyproj
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from qgis.PyQt.QtCore import QThread, pyqtSignal
 
 from .elevation_array import ElevationArray
 from .geotiff import GeoTiff

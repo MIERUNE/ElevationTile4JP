@@ -26,7 +26,7 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
-from PyQt5.QtCore import Qt
+from qgis.PyQt.QtCore import Qt
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "elevation_tile_for_jp_dialog_base.ui")
