@@ -16,55 +16,54 @@ from ..elevation_tile_tools.elevation_tile_converter import ElevationTileConvert
 
 
 class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
-
-    EXTENT = 'EXTENT'
-    ZOOM_LEVEL = 'ZOOM_LEVEL'
-    OUTPUT_PATH = 'OUTPUT_PATH'
-    OUTPUT_CRS_ID = 'OUTPUT_CRS_ID'
+    EXTENT = "EXTENT"
+    ZOOM_LEVEL = "ZOOM_LEVEL"
+    OUTPUT_PATH = "OUTPUT_PATH"
+    OUTPUT_CRS_ID = "OUTPUT_CRS_ID"
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate("Processing", string)
 
     def createInstance(self):
         return ElevationTile4JpProcessingAlgorithm()
 
     def name(self):
-        return 'elevationtile4jp_algorithm'
+        return "elevationtile4jp_algorithm"
 
     def displayName(self):
-        return self.tr('ElevationTile4JP DEM Downloader')
+        return self.tr("ElevationTile4JP DEM Downloader")
 
     def shortHelpString(self):
-        return self.tr('国土地理院の標高タイルを取得しGeoTIFFに変換するプロセッシングツールです。')
+        return self.tr(
+            "国土地理院の標高タイルを取得しGeoTIFFに変換するプロセッシングツールです。"
+        )
 
     def initAlgorithm(self, config=None):
         zoom_levels = [str(i) for i in range(15)]
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.ZOOM_LEVEL,
-                self.tr('Elevation tile zoom level'),
+                self.tr("Elevation tile zoom level"),
                 options=zoom_levels,
                 defaultValue=9,
             )
         )
         self.addParameter(
             QgsProcessingParameterRasterDestination(
-                self.OUTPUT_PATH,
-                self.tr("Output file"),
-                optional=False
+                self.OUTPUT_PATH, self.tr("Output file"), optional=False
             )
         )
         self.addParameter(
             QgsProcessingParameterCrs(
                 self.OUTPUT_CRS_ID,
-                self.tr('Output file CRS'),
-                defaultValue='EPSG:4326',
+                self.tr("Output file CRS"),
+                defaultValue="EPSG:4326",
             )
         )
         self.addParameter(
             QgsProcessingParameterExtent(
                 self.EXTENT,
-                self.tr('Extent'),
+                self.tr("Extent"),
                 optional=False,
             )
         )
@@ -85,19 +84,25 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
             return {}
 
         if not os.access(out_dir, os.W_OK):
-            feedback.reportError(f"出力先のディレクトリに書き込み権限がありません: {out_dir}")
+            feedback.reportError(
+                f"出力先のディレクトリに書き込み権限がありません: {out_dir}"
+            )
             return {}
 
         # ---------------- 出力CRS ---------------- #
-        output_crs_id = self.parameterAsCrs(parameters, self.OUTPUT_CRS_ID, context).authid()
+        output_crs_id = self.parameterAsCrs(
+            parameters, self.OUTPUT_CRS_ID, context
+        ).authid()
 
         # ---------------- BBox 取得 ---------------- #
         extent = self.parameterAsExtent(parameters, self.EXTENT, context)
         # CRS 変換
         try:
             source_crs = QgsProject.instance().crs()
-            dest_crs = QgsCoordinateReferenceSystem('EPSG:4326')
-            transform = QgsCoordinateTransform(source_crs, dest_crs, QgsProject.instance())
+            dest_crs = QgsCoordinateReferenceSystem("EPSG:4326")
+            transform = QgsCoordinateTransform(
+                source_crs, dest_crs, QgsProject.instance()
+            )
             transformed_extent = transform.transformBoundingBox(extent)
 
             if transformed_extent.isEmpty():
@@ -115,7 +120,7 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
             transformed_extent.xMinimum(),
             transformed_extent.yMinimum(),
             transformed_extent.xMaximum(),
-            transformed_extent.yMaximum()
+            transformed_extent.yMaximum(),
         ]
 
         # ---------------- パラメータ設定 ---------------- #
@@ -123,7 +128,8 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
             output_path=output_path,
             zoom_level=zoom_level,
             bbox=bbox,
-            output_crs_id=output_crs_id
+            output_crs_id=output_crs_id,
+            feedback=feedback,
         )
 
         if converter.number_of_tiles > converter.max_number_of_tiles:

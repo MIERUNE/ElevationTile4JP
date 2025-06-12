@@ -31,6 +31,7 @@ class ElevationTileConverter(QThread):
         output_crs_id="EPSG:3857",
         zoom_level=10,
         bbox=None,
+        feedback=None,
     ):
         super().__init__()
         # x_min, y_min, x_max, y_max
@@ -54,6 +55,9 @@ class ElevationTileConverter(QThread):
 
         self.elevation_array = ElevationArray(self.zoom_level, start_path, end_path)
         self.number_of_tiles = self.elevation_array.count_tiles()
+
+        self.feedback = feedback
+        self.downloaded_tiles = 0
 
     def set_abort_flag(self, flag=True):
         # used when abort signal is given
@@ -107,18 +111,21 @@ class ElevationTileConverter(QThread):
     # 一括処理を行うメソッド
     def run(self):
         try:
-            self.setMaximum.emit(self.number_of_tiles)
-            self.postMessage.emit(self.tr("Processing..."))
-            self.setAbortable.emit(True)
+            self.feedback.pushInfo(self.tr("Processing..."))
 
             # get elevation tile arrays
             tiles = []
+            self.feedback.setProgress(0)
             for x in self.elevation_array.x_length:
                 row_tiles = []
                 for y in self.elevation_array.y_length:
                     tile = self.elevation_array.fetch_tile(self.zoom_level, x, y)
                     row_tiles.append(tile)
-                    self.addProgress.emit(1)
+                    self.downloaded_tiles += 1
+                    download_progress = (
+                        self.downloaded_tiles / self.number_of_tiles * 100
+                    )
+                    self.feedback.setProgress(download_progress)
                 tiles.append(np.concatenate(row_tiles, axis=0))
 
             self.np_array = np.concatenate(tiles, axis=1)
@@ -127,12 +134,12 @@ class ElevationTileConverter(QThread):
                 error_message = (
                     "The specified extent is out of range from the provided dem tiles"
                 )
-                self.processFailed.emit(error_message)
+                self.feedback.reportError(error_message)
         except Exception as e:
-            self.processFailed.emit(e)
+            self.feedback.reportError(e)
 
-        self.postMessage.emit(self.tr("Finalizing..."))
-        self.processFinished.emit()
+        self.feedback.pushInfo(self.tr("Finalizing..."))
+        self.feedback.setProgress(100)
 
     def create_geotiff(self):
         x_length = self.np_array.shape[1]
