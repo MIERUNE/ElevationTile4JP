@@ -132,6 +132,8 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
             feedback=feedback,
         )
 
+        feedback.pushInfo(f"{converter.number_of_tiles} founded")
+
         if converter.number_of_tiles > converter.max_number_of_tiles:
             feedback.reportError(
                 f"タイルの数が多すぎます。最大{converter.max_number_of_tiles}個までです。"

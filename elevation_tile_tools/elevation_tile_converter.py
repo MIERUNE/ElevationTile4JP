@@ -5,32 +5,22 @@ import numpy as np
 
 import pyproj
 
-from qgis.PyQt.QtCore import QThread, pyqtSignal
 
 from .elevation_array import ElevationArray
 from .geotiff import GeoTiff
 from .tile_coordinate import TileCoordinate
 
 
-class ElevationTileConverter(QThread):
-    # thread signals to progress dialog
-    # use : set maximum value in progress bar: self.setMaximum.emit(110)
-    setMaximum = pyqtSignal(int)
-    addProgress = pyqtSignal(int)
-    postMessage = pyqtSignal(str)
-    processFinished = pyqtSignal()
-    setAbortable = pyqtSignal(bool)
-    processFailed = pyqtSignal(str)
-
+class ElevationTileConverter:
     max_number_of_tiles = 1000
     large_number_of_tiles = 100
 
     def __init__(
         self,
         output_path=Path(__file__).parent.parent / "GeoTiff",
-        output_crs_id="EPSG:3857",
         zoom_level=10,
         bbox=None,
+        output_crs_id="EPSG:3857",
         feedback=None,
     ):
         super().__init__()
@@ -111,8 +101,7 @@ class ElevationTileConverter(QThread):
     # 一括処理を行うメソッド
     def run(self):
         try:
-            self.feedback.pushInfo(self.tr("Processing..."))
-
+            self.feedback.pushInfo("Processing...")
             # get elevation tile arrays
             tiles = []
             self.feedback.setProgress(0)
@@ -136,9 +125,9 @@ class ElevationTileConverter(QThread):
                 )
                 self.feedback.reportError(error_message)
         except Exception as e:
-            self.feedback.reportError(e)
+            self.feedback.reportError(str(e))
 
-        self.feedback.pushInfo(self.tr("Finalizing..."))
+        self.feedback.pushInfo("Finalizing...")
         self.feedback.setProgress(100)
 
     def create_geotiff(self):
