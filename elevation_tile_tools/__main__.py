@@ -2,8 +2,7 @@ from pathlib import Path
 
 import click as click
 
-from elevation_tile_tools.elevation_tile_converter import \
-    ElevationTileConverter
+from elevation_tile_tools.elevation_tile_converter import ElevationTileConverter
 
 
 @click.command()
@@ -36,11 +35,16 @@ from elevation_tile_tools.elevation_tile_converter import \
     "-b",
     required=False,
     type=str,
-    default=[141.24847412109375, 42.974511174899156, 141.48193359375, 43.11702412135048],
+    default=[
+        141.24847412109375,
+        42.974511174899156,
+        141.48193359375,
+        43.11702412135048,
+    ],
     help="Extent of DEM tile to get. Specify with bounding box. default="
-        "[141.24847412109375,42.974511174899156,141.48193359375,43.11702412135048]",
-    )
-def main(output_path, crs_id, zoom_level, bbox):
+    "[141.24847412109375,42.974511174899156,141.48193359375,43.11702412135048]",
+)
+def main(output_path, crs_id, zoom_level, bbox, feedback):
     if isinstance(bbox, str):
         bbox = eval(bbox)
     if not is_bbox(bbox):
@@ -50,7 +54,8 @@ def main(output_path, crs_id, zoom_level, bbox):
         output_path=Path(output_path),
         output_crs_id=crs_id,
         zoom_level=zoom_level,
-        bbox=bbox
+        bbox=bbox,
+        feedback=feedback,
     )
     elevation_tile.calc()
 
@@ -65,5 +70,5 @@ def is_bbox(bbox):
     return True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

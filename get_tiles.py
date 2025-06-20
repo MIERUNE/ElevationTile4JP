@@ -31,7 +31,6 @@ from qgis.core import (
 )
 from qgis.gui import QgsFileWidget
 from qgis.PyQt.QtWidgets import QMessageBox
-from qgis.PyQt.QtCore import QThread
 
 from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
@@ -90,9 +89,7 @@ class GetTilesWithinMapCanvas:
     def set_interrupted(self):
         self.process_interrupted = True
 
-    def on_abort_clicked(
-        self, thread: QThread, progress_dialog: ProgressDialog
-    ) -> None:
+    def on_abort_clicked(self, thread, progress_dialog: ProgressDialog) -> None:
         if QMessageBox.StandardButton.Yes == QMessageBox.question(
             None,
             progress_dialog.translate("Aborting"),
@@ -104,14 +101,14 @@ class GetTilesWithinMapCanvas:
             self.abort_process(thread, progress_dialog)
 
     def handle_process_failed(
-        self, error_message, thread: QThread, progress_dialog: ProgressDialog
+        self, error_message, thread, progress_dialog: ProgressDialog
     ) -> None:
         progress_dialog.close()
         QMessageBox.information(None, progress_dialog.translate("Error"), error_message)
         self.set_interrupted()
         self.abort_process(thread, progress_dialog)
 
-    def abort_process(self, thread: QThread, progress_dialog: ProgressDialog) -> None:
+    def abort_process(self, thread, progress_dialog: ProgressDialog) -> None:
         if self.process_interrupted:
             thread.exit()
             progress_dialog.abort_dialog()
@@ -223,20 +220,8 @@ class GetTilesWithinMapCanvas:
             ]
         )
 
-        # progress dialog orchestation by process thread
-        thread.setMaximum.connect(progress_dialog.set_maximum)
-        thread.addProgress.connect(progress_dialog.add_progress)
-        thread.postMessage.connect(progress_dialog.set_message)
-        thread.setAbortable.connect(progress_dialog.set_abortable)
-        thread.processFinished.connect(progress_dialog.close)
-        thread.processFailed.connect(
-            lambda error_message: [
-                self.handle_process_failed(error_message, thread, progress_dialog)
-            ]
-        )
-
         # タイル取得処理の実行
-        thread.start()
+        thread.run()
         progress_dialog.exec_()
 
         # do not import if processed has been interrupted
