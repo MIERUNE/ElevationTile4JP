@@ -98,7 +98,16 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
         extent = self.parameterAsExtent(parameters, self.EXTENT, context)
         # CRS 変換
         try:
+            extent_crs = self.parameterAsExtentCrs(parameters, self.EXTENT, context)
             source_crs = QgsProject.instance().crs()
+
+            # Unify CRS extent to project CRS
+            if extent_crs != source_crs:
+                transform = QgsCoordinateTransform(
+                extent_crs, source_crs, QgsProject.instance()
+                )
+                extent = transform.transformBoundingBox(extent)
+
             dest_crs = QgsCoordinateReferenceSystem("EPSG:4326")
             transform = QgsCoordinateTransform(
                 source_crs, dest_crs, QgsProject.instance()
