@@ -7,7 +7,13 @@ from .elevation_array import ElevationArray
 from .geotiff import GeoTiff
 from .tile_coordinate import TileCoordinate
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPointXY, QgsProject
+from qgis.core import (
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsPointXY,
+    QgsProject,
+)
+
 
 class ElevationTileConverter:
     max_number_of_tiles = 1000
@@ -56,7 +62,7 @@ class ElevationTileConverter:
     def transform_latlon_to_xy(latlon):
         src_crs = QgsCoordinateReferenceSystem("EPSG:4326")
         dest_crs = QgsCoordinateReferenceSystem("EPSG:3857")
-        
+
         lat = latlon[0]
         lon = latlon[1]
         # 地図の端部は若干85と180をはみ出て原点の位置が座標系の変換時にずれるのでそれを修正

@@ -1,13 +1,18 @@
 from math import log, pi, tan
 
-from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPointXY, QgsProject
+from qgis.core import (
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsPointXY,
+    QgsProject,
+)
 
 
 class TileCoordinate:
     def __init__(
-            self,
-            zoom_level=10,
-            bbox=None,
+        self,
+        zoom_level=10,
+        bbox=None,
     ):
         # x_min, y_min, x_max, y_max
         if bbox is None:
@@ -24,10 +29,14 @@ class TileCoordinate:
     # QGISなどでWebメルカトルの背景地図を表示させた時に、画面範囲に背景地図のない部分が入っているとエラー
     def tile_coordinates_of_corner(self, corner_xy_list, zoom):
         corner_latlon_list = [self.xy_to_latlon(xy) for xy in corner_xy_list]
-        tile_coordinates = [self.latlon_to_tile_coordinate(
-            latlon[0], latlon[1], zoom) for latlon in corner_latlon_list]
+        tile_coordinates = [
+            self.latlon_to_tile_coordinate(latlon[0], latlon[1], zoom)
+            for latlon in corner_latlon_list
+        ]
 
-        assert tile_coordinates[1][0] <= tile_coordinates[2][0], "取得開始タイル番号より終了タイル番号の方が大きくなっています。"
+        assert tile_coordinates[1][0] <= tile_coordinates[2][0], (
+            "取得開始タイル番号より終了タイル番号の方が大きくなっています。"
+        )
 
         tile_numbers = {
             "start_x": tile_coordinates[1][0],
@@ -49,16 +58,17 @@ class TileCoordinate:
         transform = QgsCoordinateTransform(src_crs, dest_crs, QgsProject.instance())
         xy_pt_transformed = transform.transform(xy_pt)
         lon = xy_pt_transformed.x()
-        lat = xy_pt_transformed.y()   
+        lat = xy_pt_transformed.y()
 
         return [lat, lon]
 
     # 緯度経度からタイル座標を算出
     @staticmethod
     def latlon_to_tile_coordinate(lat, lon, zoom_level):
-        x = int((lon / 180 + 1) * 2 ** zoom_level / 2)
-        y = int(((-log(tan((45 + lat / 2) * pi / 180)) + pi)
-                 * 2 ** zoom_level / (2 * pi)))
+        x = int((lon / 180 + 1) * 2**zoom_level / 2)
+        y = int(
+            ((-log(tan((45 + lat / 2) * pi / 180)) + pi) * 2**zoom_level / (2 * pi))
+        )
         return [x, y]
 
     # 四隅のXY座標の組み合わせをリストで取得
@@ -67,7 +77,9 @@ class TileCoordinate:
         xmin, ymin, xmax, ymax = bbox
 
         if xmin > xmax:
-            raise ValueError("Extent is invalid. Extent of longitude must be from -180 to 180.")
+            raise ValueError(
+                "Extent is invalid. Extent of longitude must be from -180 to 180."
+            )
 
         lower_left_XY = [xmin, ymin]
         upper_left_XY = [xmin, ymax]
@@ -131,7 +143,8 @@ class TileCoordinate:
             self.zoom_level,
         )
 
-        start_path, end_path, lower_left_tile_path, upper_light_tile_path = self.create_tile_paths(
-            tile_numbers, tile_coordinates)
+        start_path, end_path, lower_left_tile_path, upper_light_tile_path = (
+            self.create_tile_paths(tile_numbers, tile_coordinates)
+        )
 
         return start_path, end_path, lower_left_tile_path, upper_light_tile_path
