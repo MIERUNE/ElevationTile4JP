@@ -1,6 +1,6 @@
 from math import log, pi, tan
 
-import pyproj
+from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsPointXY, QgsProject
 
 
 class TileCoordinate:
@@ -42,9 +42,15 @@ class TileCoordinate:
     def xy_to_latlon(xy_coordinate: list):
         x = xy_coordinate[0]
         y = xy_coordinate[1]
-        src_crs = pyproj.Proj(init="EPSG:4326")
-        dest_crs = pyproj.Proj(init="EPSG:4326")
-        lon, lat = pyproj.transform(src_crs, dest_crs, x, y)
+
+        src_crs = QgsCoordinateReferenceSystem("EPSG:4326")
+        dest_crs = QgsCoordinateReferenceSystem("EPSG:4326")
+        xy_pt = QgsPointXY(x, y)
+        transform = QgsCoordinateTransform(src_crs, dest_crs, QgsProject.instance())
+        xy_pt_transformed = transform.transform(xy_pt)
+        lon = xy_pt_transformed.x()
+        lat = xy_pt_transformed.y()   
+
         return [lat, lon]
 
     # 緯度経度からタイル座標を算出
