@@ -14,6 +14,11 @@ from qgis.PyQt.QtCore import QCoreApplication
 
 from ..elevation_tile_tools.elevation_tile_converter import ElevationTileConverter
 
+_DESCRIPTION = """
+Download Japan DEM tiles from the <a href='https://maps.gsi.go.jp/development/ichiran.html#dem'>Geospatial Information Authority of Japan (GSI)</a> and convert to GeoTiff<br>
+<a href='https://maps.gsi.go.jp/development/ichiran.html#dem'>国土地理院の標高タイル</a>を取得しGeoTIFFに変換するプロセッシングツールです。
+"""
+
 
 class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
     EXTENT = "EXTENT"
@@ -34,9 +39,7 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
         return self.tr("ElevationTile4JP DEM Downloader")
 
     def shortHelpString(self):
-        return self.tr(
-            "国土地理院の標高タイルを取得しGeoTIFFに変換するプロセッシングツールです。"
-        )
+        return _DESCRIPTION
 
     def initAlgorithm(self, config=None):
         zoom_levels = [str(i) for i in range(15)]
@@ -98,7 +101,16 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
         extent = self.parameterAsExtent(parameters, self.EXTENT, context)
         # CRS 変換
         try:
+            extent_crs = self.parameterAsExtentCrs(parameters, self.EXTENT, context)
             source_crs = QgsProject.instance().crs()
+
+            # Unify CRS extent to project CRS
+            if extent_crs != source_crs:
+                transform = QgsCoordinateTransform(
+                    extent_crs, source_crs, QgsProject.instance()
+                )
+                extent = transform.transformBoundingBox(extent)
+
             dest_crs = QgsCoordinateReferenceSystem("EPSG:4326")
             transform = QgsCoordinateTransform(
                 source_crs, dest_crs, QgsProject.instance()

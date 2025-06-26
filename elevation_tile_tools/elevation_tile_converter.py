@@ -3,12 +3,16 @@ from pathlib import Path
 
 import numpy as np
 
-import pyproj
-
-
 from .elevation_array import ElevationArray
 from .geotiff import GeoTiff
 from .tile_coordinate import TileCoordinate
+
+from qgis.core import (
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsPointXY,
+    QgsProject,
+)
 
 
 class ElevationTileConverter:
@@ -56,8 +60,9 @@ class ElevationTileConverter:
     # 緯度経度をWebメルカトルのXY座標に変換
     @staticmethod
     def transform_latlon_to_xy(latlon):
-        src_crs = pyproj.Proj(init="EPSG:4326")
-        dest_crs = pyproj.Proj(init="EPSG:3857")
+        src_crs = QgsCoordinateReferenceSystem("EPSG:4326")
+        dest_crs = QgsCoordinateReferenceSystem("EPSG:3857")
+
         lat = latlon[0]
         lon = latlon[1]
         # 地図の端部は若干85と180をはみ出て原点の位置が座標系の変換時にずれるのでそれを修正
@@ -70,7 +75,11 @@ class ElevationTileConverter:
             lon = int(-180)
         elif lon > 180:
             lon = int(180)
-        X, Y = pyproj.transform(src_crs, dest_crs, lon, lat)
+        pt_lonlat = QgsPointXY(lon, lat)
+        transform = QgsCoordinateTransform(src_crs, dest_crs, QgsProject.instance())
+        pt_xy = transform.transform(pt_lonlat)
+        X = pt_xy.x()
+        Y = pt_xy.y()
         return [X, Y]
 
     # タイル座標から、そのタイルの左下・右上の緯度経度を算出
