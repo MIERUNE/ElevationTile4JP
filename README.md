@@ -9,8 +9,7 @@ This is a QGIS plugin that downloads Japan DEM elevation tiles and converts them
 
 ## Usage
 
-- 1 Click plugin icon or select Plugin --> ElevationTile4JP in menu bar
-  - Plugin is also available through the Processing Toolbox
+- 1 Click plugin icon or select `ElevationTile4JP --> ElevationTile4JP DEM Downloader` in Processing Toolbox.
 
 <img src="img/processing.png" alt="dialog screenshot" width="600"/>
 
