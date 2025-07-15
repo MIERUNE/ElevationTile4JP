@@ -1,235 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ja_JP" sourcelanguage="en">
+<TS version="2.1" language="ja" sourcelanguage="en">
 <context>
-    <name>Dialog</name>
+    <name>ElevationTile4JpPlugin</name>
     <message>
-        <location filename="../progress_dialog.ui" line="20"/>
-        <source>Processing...</source>
-        <translation type="unfinished">処理中...</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.ui" line="44"/>
-        <source>%v/%m</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.ui" line="51"/>
-        <source>Progressing</source>
-        <translation type="unfinished">テキスト</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.ui" line="69"/>
-        <source>Cancel</source>
-        <translation type="unfinished">中断</translation>
+        <location filename="../plugin.py" line="69"/>
+        <source>ElevationTile4JP: DEM Downloader</source>
+        <translation type="unfinished">ElevationTile4JP: DEMタイルダウンローダー</translation>
     </message>
 </context>
 <context>
-    <name>ElevationTileConverter</name>
+    <name>ElevationTile4JpProcessingAlgorithm</name>
     <message>
-        <location filename="../elevation_tile_tools/elevation_tile_converter.py" line="113"/>
-        <source>Processing...</source>
-        <translation type="obsolete">集計中</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="39"/>
+        <source>Download Japan DEM Tiles</source>
+        <translation type="unfinished">DEMタイルをダウンロードする</translation>
     </message>
     <message>
-        <location filename="../elevation_tile_tools/elevation_tile_converter.py" line="136"/>
-        <source>Finalizing...</source>
-        <translation type="obsolete">終了処理中</translation>
-    </message>
-</context>
-<context>
-    <name>ElevationTileforJPDialog</name>
-    <message>
-        <location filename="../elevation_tile_for_jp_dialog_base.ui" line="14"/>
-        <source>ElevationTile4JP</source>
-        <translation type="unfinished"></translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="42"/>
+        <source>Download Japan DEM tiles from the &lt;a href=&apos;https://maps.gsi.go.jp/development/ichiran.html#dem&apos;&gt;Geospatial Information Authority of Japan (GSI)&lt;/a&gt; and convert to GeoTiff</source>
+        <translation type="unfinished">&lt;a href=&apos;https://maps.gsi.go.jp/development/ichiran.html#dem&apos;&gt;国土地理院の標高タイル&lt;/a&gt;を取得しGeoTIFFに変換するプロセッシングツールです。</translation>
     </message>
     <message>
-        <location filename="../elevation_tile_for_jp_dialog_base.ui" line="42"/>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="48"/>
         <source>Elevation tile zoom level</source>
         <translation type="unfinished">標高タイルズームレベル</translation>
     </message>
     <message>
-        <location filename="../elevation_tile_for_jp_dialog_base.ui" line="73"/>
-        <source>Output file path</source>
-        <translation type="unfinished">出力ファイル</translation>
-    </message>
-    <message>
-        <location filename="../elevation_tile_for_jp_dialog_base.ui" line="113"/>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="61"/>
         <source>Output file CRS</source>
-        <translation type="unfinished">出力ファイルCRS</translation>
+        <translation type="unfinished">出力ファイルの座標系</translation>
     </message>
     <message>
-        <location filename="../elevation_tile_for_jp_dialog.py" line="41"/>
-        <source>Select output file</source>
-        <translation type="unfinished">保存ファイルを選択してください</translation>
-    </message>
-</context>
-<context>
-    <name>GetTilesWithinMapCanvas</name>
-    <message>
-        <location filename="../get_tiles.py" line="100"/>
-        <source>Aborting</source>
-        <translation type="obsolete">確認</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="68"/>
+        <source>Extent</source>
+        <translation type="unfinished">領域</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="100"/>
-        <source>Are you sure to cancel process?</source>
-        <translation type="obsolete">処理を中断し、以降の処理をスキップしてよろしいですか？</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="77"/>
+        <source>Starting ElevationTile4JP process...</source>
+        <translation type="unfinished">ElevationTile4JP処理開始...</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="195"/>
-        <source>Error</source>
-        <translation type="obsolete">エラー</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="88"/>
+        <source>Output folder does not exists: {}</source>
+        <translation type="unfinished">出力先のディレクトリが存在しません: {}</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="135"/>
-        <source>Output file is not defined.</source>
-        <translation type="obsolete">出力ファイル名を指定してください。</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="94"/>
+        <source>Cannot write on specified output folder: {}</source>
+        <translation type="unfinished">出力先のディレクトリに書き込み権限がありません: {}</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="59"/>
-        <source>Select output file</source>
-        <translation type="obsolete">保存ファイルを選択してください</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="125"/>
+        <source>Specified extent is empty after reprojection.</source>
+        <translation type="unfinished">変換された範囲が空です。</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="145"/>
-        <source>Cannot find output folder.\n{}</source>
-        <translation type="obsolete">出力フォルダー先が存在していません。\n{}</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="130"/>
+        <source>Failed to reproject specified extent: {}</source>
+        <translation type="unfinished">座標変換に失敗しました: {}</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="158"/>
-        <source>CRS of output file is not defined.</source>
-        <translation type="obsolete">出力ファイルの座標系が指定されていません。座標系を指定してください。</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="136"/>
+        <source>Cannot specify an extent crossing the international date line.</source>
+        <translation type="unfinished">国際日付変更線を越える範囲は指定できません。</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="168"/>
-        <source>Target extent must not cross the International Date Line meridian.</source>
-        <translation type="obsolete">タイル取得範囲が不正です。マップキャンバスには標準時子午線を跨がない範囲を表示してください。</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="162"/>
+        <source>Too many tiles. Please specify a lower zoom level or smaller extent to get less than  {} tiles.</source>
+        <translation type="unfinished">タイルの数が多すぎます。最大{}個までです。</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="187"/>
-        <source>Too large amount of tiles ({}) \n</source>
-        <translation type="obsolete">取得タイル数({}枚)が多すぎます。\n</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="169"/>
+        <source>Downloading {} tiles may take a while.</source>
+        <translation type="unfinished">{} タイルをダウンロードします。時間がかかる可能性があります。</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="190"/>
-        <source>Set a lower zoom level or extent to get less than {} tiles.</source>
-        <translation type="obsolete">上限の{}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="180"/>
+        <source>An error occured during process: {}</source>
+        <translation type="unfinished">標高タイル作成中にエラーが発生しました: {}</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="199"/>
-        <source>Dowloading {} tiles may take a while. Process anyway?</source>
-        <translation type="obsolete">取得タイル数({}枚)が多いため、処理に時間がかかる可能性があります。nダウンロードを実行しますか？</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="185"/>
+        <source>GeoTIFF created.</source>
+        <translation type="unfinished">GeoTIFF作成完了しました。</translation>
     </message>
     <message>
-        <location filename="../get_tiles.py" line="204"/>
-        <source>Warning</source>
-        <translation type="obsolete">確認</translation>
-    </message>
-    <message>
-        <location filename="../get_tiles.py" line="253"/>
-        <source>DEM exported to Geotiff Format.</source>
-        <translation type="obsolete">GeoTiff形式のDEMを出力しました。</translation>
+        <location filename="../processing_provider/elevation_tile_algorithm.py" line="56"/>
+        <source>Output DEM tiles</source>
+        <translation type="unfinished">DEMタイルの出力</translation>
     </message>
 </context>
 <context>
-    <name>ProgressDialog</name>
+    <name>ElevationTileForJpProcessingProvider</name>
     <message>
-        <location filename="../progress_dialog.py" line="27"/>
-        <source>Initializing process...</source>
-        <translation type="unfinished">処理開始中..</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="31"/>
-        <source>Cancel</source>
-        <translation type="unfinished">中断</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="42"/>
-        <source>Cancelling...</source>
-        <translation type="unfinished">中断待機中...</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="64"/>
-        <source>This is a test message</source>
-        <translation type="obsolete">テストメッセージです。</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="68"/>
-        <source>Aborting</source>
-        <translation type="unfinished">確認</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="70"/>
-        <source>Are you sure to cancel process?</source>
-        <translation type="unfinished">処理を中断し、以降の処理をスキップしてよろしいですか？</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="72"/>
-        <source>Error</source>
-        <translation type="unfinished">エラー</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="74"/>
-        <source>Output file is not defined.</source>
-        <translation type="unfinished">出力ファイル名を指定してください。</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="76"/>
-        <source>Cannot find output folder.</source>
-        <translation type="unfinished">出力フォルダー先が存在していません。</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="78"/>
-        <source>CRS of output file is not defined.</source>
-        <translation type="unfinished">出力ファイルの座標系が指定されていません。座標系を指定してください。</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="83"/>
-        <source>Target extent must not cross the International Date Line meridian.</source>
-        <translation type="unfinished">タイル取得範囲が不正です。マップキャンバスには標準時子午線を跨がない範囲を表示してください。</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="87"/>
-        <source>Too large amount of tiles ({})
-</source>
-        <translation type="obsolete">取得タイル数({}枚)が多すぎます。</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="89"/>
-        <source>Set a lower zoom level or extent to get less than {} tiles.</source>
-        <translation type="unfinished">上限の{}枚を超えないように取得領域を狭くするか、ズームレベルを小さくしてください。</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="93"/>
-        <source>Dowloading {} tiles may take a while. Process anyway?</source>
-        <translation type="unfinished">取得タイル数({}枚)が多いため、処理に時間がかかる可能性があります。ダウンロードを実行しますか？</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="97"/>
-        <source>Warning</source>
-        <translation type="unfinished">確認</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="99"/>
-        <source>DEM exported to Geotiff Format.</source>
-        <translation type="unfinished">GeoTiff形式のDEMを出力しました。</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="64"/>
-        <source>Processing...</source>
-        <translation type="unfinished">集計中</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="66"/>
-        <source>Finalizing...</source>
-        <translation type="unfinished">終了処理中</translation>
-    </message>
-    <message>
-        <location filename="../progress_dialog.py" line="87"/>
-        <source>Too large amount of tiles ({})</source>
-        <translation type="unfinished">取得タイル数({}枚)が多すぎます。</translation>
+        <location filename="../processing_provider/elevation_tile_provider.py" line="17"/>
+        <source>ElevationTile4JP</source>
+        <translation type="unfinished">ElevationTile4JP</translation>
     </message>
 </context>
 </TS>
