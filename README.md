@@ -2,24 +2,26 @@
 ![](icon.png)
 
 ## Overview
-This is a QGIS plugin that downloads Japan elevation tiles and converts them to GeoTiff.
+This is a QGIS plugin that downloads Japan DEM elevation tiles and converts them to GeoTiff.
 <br>
 ![](./img/mov.gif)
 
 
 ## Usage
 
-- 1 Click plugin icon or select Plugin --> ElevationTile4JP in menu bar
+- 1 Click plugin icon or select `ElevationTile4JP --> Download Japan DEM Tiles` in Processing Toolbox.
+
+<img src="img/processing.png" alt="dialog screenshot" width="600"/>
+
 - 2 Select tiles zoom level
-- 3 Set the output file
-- 4 Select the output file CRS
-- 5 Set the area of interest. Area of interest can be set with:
+- 3 Select the output file CRS
+- 4 Set the area of interest. Extent can be set with:
   - Layer: target layer extent
   - Layout Map: target layout map extent
   - Bookmark: extent saved on bookmark
   - Map Canvas Extent: current map canvas extent
   - Draw on Canvas: draw customize extent on map canvas
-
+- 5 Set the output file
 - 6 Click OK and the processed file will be added to the map canvas
 
 <img src="img/dialog.png" alt="dialog screenshot" width="600"/>

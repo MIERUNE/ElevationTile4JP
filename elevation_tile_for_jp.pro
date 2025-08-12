@@ -1,7 +1,5 @@
-SOURCES += elevation_tile_for_jp_dialog.py \
-            progress_dialog.py \
+SOURCES += ./processing_provider/elevation_tile_algorithm.py \
+            ./processing_provider/elevation_tile_provider.py \
+            ./plugin.py
 
-FORMS += elevation_tile_for_jp_dialog_base.ui \
-            progress_dialog.ui
-
-TRANSLATIONS = ./i18n/ELEVATIONTILE4JP_en.ts ./i18n/ELEVATIONTILE4JP_ja.ts
+TRANSLATIONS = ./i18n/ELEVATIONTILE4JP_ja.ts

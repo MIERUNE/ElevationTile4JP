@@ -27,7 +27,7 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
     OUTPUT_CRS_ID = "OUTPUT_CRS_ID"
 
     def tr(self, string):
-        return QCoreApplication.translate("Processing", string)
+        return QCoreApplication.translate("ElevationTile4JpProcessingAlgorithm", string)
 
     def createInstance(self):
         return ElevationTile4JpProcessingAlgorithm()
@@ -36,10 +36,12 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
         return "elevationtile4jp_algorithm"
 
     def displayName(self):
-        return self.tr("ElevationTile4JP DEM Downloader")
+        return self.tr("Download Japan DEM Tiles")
 
     def shortHelpString(self):
-        return _DESCRIPTION
+        return self.tr(
+            "Download Japan DEM tiles from the <a href='https://maps.gsi.go.jp/development/ichiran.html#dem'>Geospatial Information Authority of Japan (GSI)</a> and convert to GeoTiff"
+        )
 
     def initAlgorithm(self, config=None):
         zoom_levels = [str(i) for i in range(15)]
@@ -53,7 +55,7 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterRasterDestination(
-                self.OUTPUT_PATH, self.tr("Output file"), optional=False
+                self.OUTPUT_PATH, self.tr("Output DEM tiles"), optional=False
             )
         )
         self.addParameter(
@@ -72,7 +74,7 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
         )
 
     def processAlgorithm(self, parameters, context, feedback):
-        feedback.pushInfo("ElevationTile4JP処理開始...")
+        feedback.pushInfo(self.tr("Starting ElevationTile4JP process..."))
         # ---------------- ズームレベル ---------------- #
         zoom_levels = [str(i) for i in range(15)]
         zoom_level_index = self.parameterAsEnum(parameters, self.ZOOM_LEVEL, context)
@@ -83,12 +85,14 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
 
         out_dir = out_dir = os.path.dirname(output_path) or os.getcwd()
         if not os.path.exists(out_dir):
-            feedback.reportError(f"出力先のディレクトリが存在しません: {out_dir}")
+            feedback.reportError(
+                self.tr("Output folder does not exists: {}").format(out_dir)
+            )
             return {}
 
         if not os.access(out_dir, os.W_OK):
             feedback.reportError(
-                f"出力先のディレクトリに書き込み権限がありません: {out_dir}"
+                self.tr("Cannot write on specified output folder: {}").format(out_dir)
             )
             return {}
 
@@ -118,14 +122,22 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
             transformed_extent = transform.transformBoundingBox(extent)
 
             if transformed_extent.isEmpty():
-                feedback.reportError("変換された範囲が空です。")
+                feedback.reportError(
+                    self.tr("Specified extent is empty after reprojection.")
+                )
                 return {}
         except Exception as e:
-            feedback.reportError(f"座標変換に失敗しました: {str(e)}")
+            feedback.reportError(
+                self.tr("Failed to reproject specified extent: {}").format(str(e))
+            )
             return {}
 
         if transformed_extent.xMinimum() > transformed_extent.xMaximum():
-            feedback.reportError("国際日付変更線を越える範囲は指定できません。")
+            feedback.reportError(
+                self.tr(
+                    "Cannot specify an extent crossing the international date line."
+                )
+            )
             return {}
 
         bbox = [
@@ -148,12 +160,16 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
 
         if converter.number_of_tiles > converter.max_number_of_tiles:
             feedback.reportError(
-                f"タイルの数が多すぎます。最大{converter.max_number_of_tiles}個までです。"
+                self.tr(
+                    "Too many tiles. Please specify a lower zoom level or smaller extent to get less than  {} tiles."
+                ).format(converter.max_number_of_tiles)
             )
             return {}
         elif converter.number_of_tiles > converter.large_number_of_tiles:
             feedback.pushWarning(
-                f"{converter.number_of_tiles} タイルをダウンロードします。時間がかかる可能性があります。"
+                self.tr("Downloading {} tiles may take a while.").format(
+                    converter.number_of_tiles
+                )
             )
 
         # ---------------- 実行 ---------------- #
@@ -161,9 +177,11 @@ class ElevationTile4JpProcessingAlgorithm(QgsProcessingAlgorithm):
             converter.run()
             converter.create_geotiff()
         except Exception as e:
-            feedback.reportError(f"標高タイル作成中にエラーが発生しました: {str(e)}")
+            feedback.reportError(
+                self.tr("An error occured during process: {}").format(str(e))
+            )
             return {}
 
-        feedback.pushInfo("GeoTIFF作成完了しました。")
+        feedback.pushInfo(self.tr("GeoTIFF created."))
 
         return {self.OUTPUT_PATH: output_path}
