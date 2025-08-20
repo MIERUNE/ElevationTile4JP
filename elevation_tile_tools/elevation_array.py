@@ -4,7 +4,6 @@ import numpy as np
 
 
 class ElevationArray:
-
     def __init__(self, zoom_level, start_path, end_path):
         self.zoom_level = zoom_level
         self.start_path = start_path
