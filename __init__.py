@@ -27,7 +27,9 @@ from qgis._gui import QgisInterface
 
 from .plugin import ElevationTile4JpPlugin
 
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "elevation_tile_tools"))
+sys.path.append(
+    os.path.join(os.path.dirname(os.path.dirname(__file__)), "elevation_tile_tools")
+)
 
 
 def classFactory(iface: QgisInterface):
