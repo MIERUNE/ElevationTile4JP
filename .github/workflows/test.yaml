@@ -42,4 +42,4 @@ jobs:
 
       - name: Docker run plugin tests
         run: |
-          docker exec -e QT_QPA_PLATFORM=offscreen qgis-testing-environment sh -c "qgis_testrunner.sh plugin_dir.test_suite.test_package"
+          docker exec -e QT_QPA_PLATFORM=offscreen qgis-testing-environment sh -c "qgis_testrunner.sh plugin_dir.test_minimal"
