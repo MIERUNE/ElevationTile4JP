@@ -1,5 +1,5 @@
-from elevation_tile_for_jp import ElevationTileForJP
-from get_tiles import GetTilesWithinMapCanvas
+from ..elevation_tile_for_jp import ElevationTileForJP
+from ..get_tiles import GetTilesWithinMapCanvas
 
 
 def test_show_dialog(plugin: ElevationTileForJP):
