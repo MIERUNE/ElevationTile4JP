@@ -10,6 +10,8 @@ import unittest
 from osgeo import gdal
 from qgis.core import Qgis
 
+from qgis.testing import start_app
+
 try:
     from pip import main as pipmain
 except ImportError:
@@ -65,6 +67,9 @@ def test_package(package="plugin_dir"):
     :param package: The package to test.
     :type package: str
     """
+
+    start_app()
+
     test_loader = unittest.defaultTestLoader
     try:
         test_suite = test_loader.discover(package)
