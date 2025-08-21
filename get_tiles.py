@@ -32,11 +32,11 @@ from qgis.core import (
 from qgis.gui import QgsFileWidget
 from qgis.PyQt.QtWidgets import QMessageBox
 
-from elevation_tile_for_jp_dialog import ElevationTileforJPDialog
+from .elevation_tile_for_jp_dialog import ElevationTileforJPDialog
 
-from elevation_tile_tools import ElevationTileConverter
+from .elevation_tile_tools.elevation_tile_converter import ElevationTileConverter
 
-from progress_dialog import ProgressDialog
+from .progress_dialog import ProgressDialog
 
 
 class GetTilesWithinMapCanvas:
