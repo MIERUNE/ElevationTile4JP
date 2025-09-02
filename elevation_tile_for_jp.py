@@ -27,7 +27,7 @@ from qgis.PyQt.QtWidgets import QAction
 
 import os.path
 
-from get_tiles import GetTilesWithinMapCanvas
+from .get_tiles import GetTilesWithinMapCanvas
 
 
 class ElevationTileForJP:

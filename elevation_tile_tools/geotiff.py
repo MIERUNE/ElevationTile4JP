@@ -1,6 +1,5 @@
 import datetime
 import os
-import shutil
 
 from osgeo import gdal, osr
 
@@ -33,8 +32,7 @@ class GeoTiff:
         # ドライバーの作成
         driver = gdal.GetDriverByName("GTiff")
         # ドライバーに対して「保存するファイルのパス・グリットセル数・バンド数・ラスターの種類・ドライバー固有のオプション」を指定してファイルを作成
-        dst_ds = driver.Create(self.output_path, xlen,
-                               ylen, 1, gdal.GDT_Float32)
+        dst_ds = driver.Create(self.output_path, xlen, ylen, 1, gdal.GDT_Float32)
         # geotransformをセット
         dst_ds.SetGeoTransform(geotransform)
 
@@ -60,15 +58,14 @@ class GeoTiff:
         # warp前後で同名のファイルを指定できないため、別名でファイルを作成する
         now = datetime.datetime.now()
         tmp_filename = f"tmp_{now.strftime('%Y%m%d_%H%M%S')}.tiff"
-        warped_path = os.path.join(
-            os.path.dirname(self.output_path), tmp_filename)
+        warped_path = os.path.join(os.path.dirname(self.output_path), tmp_filename)
 
         resampled_ras = gdal.Warp(
             warped_path,
             self.output_path,
             srcSRS=src_crs_id,
             dstSRS=output_crs_id,
-            resampleAlg="near"
+            resampleAlg="near",
         )
         resampled_ras.FlushCache()
         del resampled_ras
