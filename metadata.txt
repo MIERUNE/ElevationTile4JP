@@ -5,6 +5,7 @@
 [general]
 name=ElevationTile4JP
 qgisMinimumVersion=3.16
+qgisMaximumVersion=4.99
 description=Convert elevation tiles provided by Geospatial Information Authority of Japan (GSI) to GeoTiff format DEM.
 version={{PLUGIN_VERSION}}
 supportsQt6=True
