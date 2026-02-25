@@ -222,7 +222,7 @@ class GetTilesWithinMapCanvas:
 
         # タイル取得処理の実行
         thread.run()
-        progress_dialog.exec_()
+        progress_dialog.exec()
 
         # do not import if processed has been interrupted
         if self.process_interrupted:
