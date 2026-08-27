@@ -34,9 +34,10 @@ class TileCoordinate:
             for latlon in corner_latlon_list
         ]
 
-        assert (
-            tile_coordinates[1][0] <= tile_coordinates[2][0]
-        ), "取得開始タイル番号より終了タイル番号の方が大きくなっています。"
+        if tile_coordinates[1][0] > tile_coordinates[2][0]:
+            raise ValueError(
+                "取得開始タイル番号より終了タイル番号の方が大きくなっています。"
+            )
 
         tile_numbers = {
             "start_x": tile_coordinates[1][0],
