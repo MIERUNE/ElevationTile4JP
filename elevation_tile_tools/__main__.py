@@ -1,3 +1,4 @@
+import ast
 from pathlib import Path
 
 import click as click
@@ -46,7 +47,7 @@ from elevation_tile_tools.elevation_tile_converter import ElevationTileConverter
 )
 def main(output_path, crs_id, zoom_level, bbox, feedback):
     if isinstance(bbox, str):
-        bbox = eval(bbox)
+        bbox = ast.literal_eval(bbox)
     if not is_bbox(bbox):
         raise Exception("The bbox is invalid.")
 

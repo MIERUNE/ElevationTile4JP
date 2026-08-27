@@ -1,4 +1,5 @@
-import urllib
+import urllib.error
+import urllib.request
 
 import numpy as np
 
@@ -16,7 +17,8 @@ class ElevationArray:
     def fetch_tile(z, x, y):
         tile_URL = f"https://cyberjapandata.gsi.go.jp/xyz/dem/{z}/{x}/{y}.txt"
         try:
-            csv_file = urllib.request.urlopen(tile_URL)
+            # URL scheme/host are fixed https literals; z/x/y are integers
+            csv_file = urllib.request.urlopen(tile_URL)  # nosec B310
             array = np.genfromtxt(csv_file, delimiter=",", filling_values=-9999)
         except urllib.error.HTTPError:
             array = np.full((256, 256), -9999)
